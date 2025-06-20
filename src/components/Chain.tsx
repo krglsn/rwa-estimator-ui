@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'preact/hooks'
 import type {Provider} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
+import {CopyableAddress} from "./CopyAddress.tsx";
 
 type Props = {
     provider: Provider | null
@@ -10,16 +11,6 @@ export default function Chain({provider}: Props) {
 
     const [blockNumber, setBlockNumber] = useState<number | null>(null)
     const [blockTime, setBlockTime] = useState<string>("")
-
-    // const listener = async (block: number) => {
-    //   blockNumber = block;
-    //   const blockData = await provider.getBlock(blockNumber);
-    //   const timestamp = blockData ? blockData.timestamp : 0;
-    //   blockTime = new Date(timestamp * 1000).toISOString();
-    // };
-    //
-    // await provider.on('block', listener);
-
 
     useEffect(() => {
         if (provider) {
@@ -49,16 +40,8 @@ export default function Chain({provider}: Props) {
                 <span
                     className="value">{blockNumber ? blockNumber + "|" : 'loading...'}{blockTime}</span>
             </div>
-            <div className="field">
-                <span className="label">Token: </span>
-                <span
-                    className="value">{CONTRACT_CONFIG.realEstateTokenAddress}</span>
-            </div>
-            <div className="field">
-                <span className="label">Pool: </span>
-                <span
-                    className="value">{CONTRACT_CONFIG.poolAddress}</span>
-            </div>
-
-        </div>)
+            <CopyableAddress label={"Token"} address={CONTRACT_CONFIG.realEstateTokenAddress}></CopyableAddress>
+            <CopyableAddress label={"Pool"} address={CONTRACT_CONFIG.poolAddress}></CopyableAddress>
+        </div>
+    )
 }
