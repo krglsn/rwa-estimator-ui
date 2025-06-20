@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'preact/hooks'
-import type {Provider} from 'ethers'
+import type {WebSocketProvider} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
 
 type Props = {
-    provider: Provider | null
+    provider: WebSocketProvider | null
 }
 
 export default function Chain({provider}: Props) {

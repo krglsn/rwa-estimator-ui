@@ -1,22 +1,42 @@
 import {useEffect, useState} from 'preact/hooks'
-import {BrowserProvider, type Provider, WebSocketProvider} from 'ethers'
+import {BrowserProvider, JsonRpcProvider, WebSocketProvider} from 'ethers'
 import './index.css'
 import Home from "./pages/Home.tsx";
 import {CONTRACT_CONFIG} from "./config/chain.ts";
 
 export function App() {
 
-    const [provider, setProvider] = useState<Provider | null>(null)
+    const [provider, setProvider] = useState<JsonRpcProvider | null>(null)
     const [walletProvider, setWalletProvider] = useState<BrowserProvider | null>(null)
+    const [wsProvider, setWsProvider] = useState<WebSocketProvider | null>(null)
+
 
     useEffect(() => {
 
         let wsProvider = new WebSocketProvider(CONTRACT_CONFIG.wsRpc);
-        setProvider(wsProvider)
+        setWsProvider(wsProvider)
 
         return () => {
             wsProvider.removeAllListeners()
             wsProvider.destroy?.()
+        }
+
+    }, [])
+
+    useEffect(() => {
+
+        let rpcProvider: JsonRpcProvider = new JsonRpcProvider(CONTRACT_CONFIG.rpc);
+
+        rpcProvider.getBlockNumber().then(() => {
+            setProvider(rpcProvider)
+            console.log("RPC provider set")
+        }).catch((err) => {
+            console.error("Failed to connect to provider:", err);
+        });
+
+        return () => {
+            rpcProvider.removeAllListeners()
+            rpcProvider.destroy?.()
         }
 
     }, [])
@@ -37,6 +57,8 @@ export function App() {
         };
     }, []);
 
-    return <Home provider={provider}/>;
+    return (provider && wsProvider && walletProvider) ?
+        <Home provider={provider} wsProvider={wsProvider} browserProvider={walletProvider} /> :
+        <div>Providers are not available</div>
 
 }

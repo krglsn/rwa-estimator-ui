@@ -2,19 +2,21 @@
 import Layout from '../layout';
 import Chain from '../components/Chain.tsx';
 import Token from '../components/Token.tsx';
-import type {Provider} from "ethers";
+import type {BrowserProvider, JsonRpcProvider, WebSocketProvider} from "ethers";
 
 type Props = {
-    provider: Provider | null
+    provider: JsonRpcProvider | null,
+    wsProvider: WebSocketProvider | null,
+    browserProvider: BrowserProvider | null,
 }
 
-export default function Home( { provider }: Props) {
+export default function Home( { provider, wsProvider, }: Props) {
 
   return (
     <Layout>
       <div class="grid grid-cols-2 gap-6 p-6">
-        <Chain provider={provider} />
-        <Token />
+        <Chain provider={wsProvider} />
+        <Token provider={provider}/>
       </div>
     </Layout>
   );
