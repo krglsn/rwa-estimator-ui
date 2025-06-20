@@ -2,14 +2,18 @@
 import Layout from '../layout';
 import Chain from '../components/Chain.tsx';
 import Token from '../components/Token.tsx';
+import type {Provider} from "ethers";
 
-export default function Home() {
-  const account = '0x9c81a0ae0cdf...';
+type Props = {
+    provider: Provider | null
+}
+
+export default function Home( { provider }: Props) {
 
   return (
-    <Layout account={account}>
+    <Layout>
       <div class="grid grid-cols-2 gap-6 p-6">
-        <Chain />
+        <Chain provider={provider} />
         <Token />
       </div>
     </Layout>

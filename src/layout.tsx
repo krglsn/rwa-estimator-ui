@@ -2,7 +2,6 @@ import type {FunctionalComponent} from 'preact';
 import {useWallet} from './lib/useWallet';
 
 interface LayoutProps {
-    account?: string;
     children: preact.ComponentChildren;
 }
 
