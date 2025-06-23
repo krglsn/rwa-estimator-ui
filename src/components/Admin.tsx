@@ -1,7 +1,8 @@
-import {useRef, useState} from 'preact/hooks'
+import {useRef, useState, useEffect} from 'preact/hooks'
 import {type BrowserProvider, ethers, getAddress} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
+import {useWallet} from "../lib/useWallet.ts";
 
 type Props = {
     provider: BrowserProvider | null
@@ -10,7 +11,24 @@ type Props = {
 export default function Admin({provider}: Props) {
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
+    const {account,} = useWallet()
     const addressRef = useRef<HTMLInputElement>(null);
+    const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, provider);
+
+    useEffect(() => {
+
+        async function updateStatus() {
+            if (account) {
+                const owner = await token.owner();
+                if (owner.toLowerCase() === account.toLowerCase())
+                    {setIsOwner(true)}
+                else {setIsOwner(false)}
+            }
+        }
+
+        updateStatus();
+    }, [account])
 
     const handleAddAppraiser = async (appraiser: string) => {
         try {
@@ -50,6 +68,9 @@ export default function Admin({provider}: Props) {
         <div className="card min-h-max bg-base-100 card-border">
             <div className="card-title justify-center">
                 <div className="my-8"><br/>Admin</div>
+                <div
+                    className={`status ${isOwner ? 'status-success' : 'status-error'} animate-ping`}
+                />
             </div>
             <div className="card-body flex justify-center">
                 <legend className="fieldset-legend">Register appraiser</legend>
