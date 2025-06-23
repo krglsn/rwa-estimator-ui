@@ -4,14 +4,16 @@ import Chain from '../components/Chain.tsx';
 import Token from '../components/Token.tsx';
 import type {BrowserProvider, JsonRpcProvider, WebSocketProvider} from "ethers";
 import Admin from "../components/Admin.tsx";
+import type {FunctionalComponent} from "preact";
 
 type Props = {
+    path?: string,
     provider: JsonRpcProvider | null,
     wsProvider: WebSocketProvider | null,
     browserProvider: BrowserProvider | null,
 }
 
-export default function Home({provider, wsProvider, browserProvider}: Props) {
+const Home: FunctionalComponent<Props> = ({provider, wsProvider, browserProvider}: Props) => {
 
     return (
         <Layout>
@@ -23,3 +25,5 @@ export default function Home({provider, wsProvider, browserProvider}: Props) {
         </Layout>
     );
 }
+
+export default Home

@@ -16,7 +16,7 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
             <div className="navbar-center">
                 <ul className="menu menu-horizontal textarea-lg">
                     <li><a className="no-underline text-inherit" href="/admin">Admin</a></li>
-                    <li><a className="no-underline text-inherit">Appraiser</a></li>
+                    <li><a className="no-underline text-inherit" href="/appraiser">Appraiser</a></li>
                     <li><a className="no-underline text-inherit">Depositor</a></li>
                 </ul>
             </div>

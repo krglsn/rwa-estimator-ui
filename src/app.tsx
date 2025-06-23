@@ -3,6 +3,8 @@ import {BrowserProvider, JsonRpcProvider, WebSocketProvider} from 'ethers'
 import './index.css'
 import Home from "./pages/Home.tsx";
 import {CONTRACT_CONFIG} from "./config/chain.ts";
+import {Router} from "preact-router";
+import Appraiser from "./pages/Appraiser.tsx";
 
 export function App() {
 
@@ -58,7 +60,10 @@ export function App() {
     }, []);
 
     return (provider && wsProvider && walletProvider) ?
-        <Home provider={provider} wsProvider={wsProvider} browserProvider={walletProvider} /> :
+        <Router>
+            <Home path="/" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
+            <Appraiser path="/appraiser"wsProvider={wsProvider} />
+        </Router> :
         <div>Providers are not available</div>
 
 }
