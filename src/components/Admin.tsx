@@ -11,7 +11,6 @@ export default function Admin({provider}: Props) {
 
     const [isLoading, setIsLoading] = useState(false);
     const addressRef = useRef<HTMLInputElement>(null);
-    // const pool = new ethers.Contract(CONTRACT_CONFIG.poolAddress, Pool.abi, provider)
 
     const handleAddAppraiser = async (appraiser: string) => {
         try {
@@ -53,7 +52,6 @@ export default function Admin({provider}: Props) {
                 <div className="my-8"><br/>Admin</div>
             </div>
             <div className="card-body flex justify-center">
-
                 <legend className="fieldset-legend">Register appraiser</legend>
                 <div className="join">
                     <label className="input w-[400px] join-item">
