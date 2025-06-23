@@ -1,7 +1,6 @@
 import {useRef, useState} from 'preact/hooks'
-import {type BrowserProvider, getAddress} from 'ethers'
+import {type BrowserProvider, ethers, getAddress} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
-import {ethers} from "ethers";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 
 type Props = {
@@ -49,23 +48,25 @@ export default function Admin({provider}: Props) {
     };
 
     return (
-        <div className="card min-h-[250px] bg-base-100 card-border">
+        <div className="card min-h-max bg-base-100 card-border">
             <div className="card-title justify-center">
                 <div className="my-8"><br/>Admin</div>
             </div>
-            <div className="card-body textarea-lg flex justify-center">
-                <div>
-                    <span>Add appraiser: </span>
-                    <input
-                        type="string"
-                        ref={addressRef}
-                        className="input input-bordered w-flex"
-                        placeholder="Address"
-                    />
+            <div className="card-body flex justify-center">
+
+                <legend className="fieldset-legend">Register appraiser</legend>
+                <div className="join">
+                    <label className="input w-[400px] join-item">
+                        <span className="label">Address</span>
+                        <input
+                            type="string"
+                            ref={addressRef}
+                        />
+                    </label>
                     <button
                         onClick={handleClick}
                         disabled={isLoading}
-                        className="btn btn-primary"
+                        className="btn btn-primary join-item"
                     >
                         {isLoading ? (
                             <span className="loading loading-spinner loading-sm"/>
@@ -74,6 +75,7 @@ export default function Admin({provider}: Props) {
                         )}
                     </button>
                 </div>
+
             </div>
         </div>
     )

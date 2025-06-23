@@ -15,7 +15,7 @@ export default function Home({provider, wsProvider, browserProvider}: Props) {
 
     return (
         <Layout>
-            <div class="grid grid-cols-2 gap-x-4">
+            <div class="grid grid-flow-row grid-cols-2 gap-[10px] mx-[50px] items-center justify-center">
                 <Chain provider={wsProvider}/>
                 <Token provider={provider}/>
                 <Admin provider={browserProvider}/>

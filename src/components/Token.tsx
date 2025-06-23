@@ -56,48 +56,54 @@ export default function Chain({provider}: Props) {
     }, [tokenId, epochId])
 
     return (
-            <div className="card min-h-[250px] bg-base-100 shadow card-border">
+        <div className="flex justify-center">
+            <div className="card w-full min-h-max bg-base-100 card-border card-lg">
                 <div className="card-title justify-center">
                     <br/>Token
                 </div>
-                <div className="card-body textarea-lg justify-center">
-                    <div>
-                        <span>Choose token id: </span>
-                        <input
-                            type="number"
-                            min={0}
-                            className="input input-sm"
-                            placeholder="Token ID"
-                            value={tokenId}
-                            onChange={(
-                                e) => setTokenId(
-                                parseInt((e.target as HTMLInputElement).value) || 0
-                            )}
-                        />
-                    </div>
-                    <div>
-                        <span>Total supply: </span>
-                        <span> {supply ?? "loading..."}</span>
-                    </div>
-                    <div><span>Choose epoch id: </span>
-                        <input
-                            type="number"
-                            min={0}
-                            className="input input-sm"
-                            placeholder="Epoch ID"
-                            value={epochId}
-                            onChange={(
-                                e) => setEpochId(
-                                parseInt((e.target as HTMLInputElement).value) || 0
-                            )}
-                        /></div>
-                    <div>
-                        <span>Epoch price: </span>
-                        <span
-                            className="value">{price ?? "loading..."}</span>
-                    </div>
+                <div className="card-body justify-center">
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend">Choose token</legend>
+                        <label className="input w-[140px]">
+                            <span className="label">ID</span>
+                            <input
+                                type="number"
+                                min={0}
+                                placeholder="Token ID"
+                                value={tokenId}
+                                onChange={(
+                                    e) => setTokenId(
+                                    parseInt((e.target as HTMLInputElement).value) || 0
+                                )}
+                            />
+                        </label>
+                        <p className="label"><span>Total supply: </span>
+                            <span> {supply ?? "loading..."}</span></p>
+                    </fieldset>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend">Choose epoch</legend>
+                        <label className="input  w-[140px]">
+                            <span className="label">ID</span>
+                            <input
+                                type="number"
+                                min={0}
+                                placeholder="Epoch ID"
+                                value={epochId}
+                                onChange={(
+                                    e) => setEpochId(
+                                    parseInt((e.target as HTMLInputElement).value) || 0
+                                )}
+                            />
+
+                        </label>
+                        <p className="label"><span>Epoch price: </span>
+                            <span> {price ?? "loading..."}</span></p>
+                    </fieldset>
+
                 </div>
             </div>
+        </div>
+
     )
 
 }

@@ -66,11 +66,12 @@ export default function Chain({provider}: Props) {
 
     // @ts-ignore
     return (
-            <div className="card min-h-[250px] bg-base-100 card-border">
+        <div className="flex justify-center">
+            <div className="card w-[800px] min-h-max bg-base-100 card-border card-lg justify-center">
                 <div className="card-title justify-center">
-                    <div className="my-8"><br/>Chain</div>
+                    <div><br/>Chain</div>
                 </div>
-                <div className="card-body textarea-lg p-6 flex justify-center">
+                <div className="card-body flex justify-center">
                     <div>
                         Block: {blockNumber ? blockNumber + " | " : 'loading...'}{blockTime}
                     </div>
@@ -83,5 +84,8 @@ export default function Chain({provider}: Props) {
                     <div><CopyableAddress label={"Pool"} address={CONTRACT_CONFIG.poolAddress}></CopyableAddress></div>
                 </div>
             </div>
+        </div>
+
+
     )
 }
