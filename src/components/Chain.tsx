@@ -62,28 +62,26 @@ export default function Chain({provider}: Props) {
         }
 
 
-
-
     }, [provider])
 
+    // @ts-ignore
     return (
-        <div className="widget">
-            <h2 className="widget-title">Chain</h2>
-            <div className="field">
-                <span className="label">Block: </span>
-                <span
-                    className="value">{blockNumber ? blockNumber + "|" : 'loading...'}{blockTime}</span>
+            <div className="card min-h-[250px] bg-base-100 card-border">
+                <div className="card-title justify-center">
+                    <div className="my-8"><br/>Chain</div>
+                </div>
+                <div className="card-body textarea-lg p-6 flex justify-center">
+                    <div>
+                        Block: {blockNumber ? blockNumber + " | " : 'loading...'}{blockTime}
+                    </div>
+                    <div>
+                        Epoch: {epochId ? epochId + " | " : 'loading...'}
+                        {epochEndTime ? new Date(epochEndTime * 1000).toISOString() : ""}
+                    </div>
+                    <div><CopyableAddress label={"Token"}
+                                          address={CONTRACT_CONFIG.realEstateTokenAddress}></CopyableAddress></div>
+                    <div><CopyableAddress label={"Pool"} address={CONTRACT_CONFIG.poolAddress}></CopyableAddress></div>
+                </div>
             </div>
-            <div className="field">
-                <span className="label">Epoch: </span>
-                <span
-                    className="value">
-                    {epochId ? epochId + "|" : 'loading...'}
-                    {new Date(epochEndTime * 1000).toISOString()}
-                </span>
-            </div>
-            <CopyableAddress label={"Token"} address={CONTRACT_CONFIG.realEstateTokenAddress}></CopyableAddress>
-            <CopyableAddress label={"Pool"} address={CONTRACT_CONFIG.poolAddress}></CopyableAddress>
-        </div>
     )
 }

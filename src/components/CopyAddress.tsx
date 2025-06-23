@@ -19,13 +19,11 @@ export function CopyableAddress({label, address}: CopyableAddressProps) {
     };
 
     return (
-        <div className="field">
-            <span className="label">{label}:</span>
-            <div className="flex items-center gap-2">
-                <span className="value">{address}</span>
-                <button
+        <div>
+            <div className="flex items-center gap-16">
+                {label}: {address}{"      "}<button
                     onClick={handleCopy}
-                    className="btn btn-xs btn-outline btn-primary"
+                    className="btn btn-xs btn-outline btn-soft"
                 >
                     {copied ? '✅' : '📋'}
                 </button>

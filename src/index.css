@@ -1,23 +1,6 @@
-@import "tailwindcss";
-@import "tailwindcss/utilities";
-
-
-.widget {
-    @apply bg-white shadow-xl rounded-xl p-8 space-y-2
-}
-
-.widget-title {
-    @apply text-xl font-bold text-center text-gray-500 mb-4;
-}
-
-.label {
-    @apply font-semibold text-gray-500;
-}
-
-.value {
-    @apply font-mono text-gray-500;
-}
-
-.field {
-    @apply grid grid-cols-[auto_1fr] gap-x-2 text-sm;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "daisyui" {
+   themes: emerald --default;
+ }
