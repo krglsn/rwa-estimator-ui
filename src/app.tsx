@@ -49,6 +49,9 @@ export function App() {
             if (window.ethereum) {
                 // @ts-ignore
                 const provider = new BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const addr = await signer.getAddress();
+                console.log("Wallet address: ", addr);
                 setWalletProvider(provider);
             }
         };
@@ -62,7 +65,7 @@ export function App() {
     return (provider && wsProvider && walletProvider) ?
         <Router>
             <Home path="/" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
-            <Appraiser path="/appraiser"wsProvider={wsProvider} />
+            <Appraiser path="/appraiser" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
         </Router> :
         <div>Providers are not available</div>
 
