@@ -24,16 +24,16 @@ export const NotificationProvider = ({children}: { children: preact.ComponentChi
 
     const show = (n: Notification) => {
         setNotification(n);
-        setTimeout(() => setNotification(null), 5000); // скрыть через 5 секунд
+        setTimeout(() => setNotification(null), 3000);
     };
 
     return (
         <NotificationContext.Provider value={{show, notification}}>
             {children}
             {notification && (
-                <div className={`toast toast-${notification.type ?? 'info'} toast-bottom toast-end shadow-lg w-max`}>
+                <div className={`toast toast-bottom toast-end w-max`}>
                     <div
-                        className={`alert alert-${notification.type ?? 'info'} alert-outline shadow-lg w-max`}>
+                        className={`alert alert-${notification.type ?? 'info'} alert-outline w-max`}>
                         <span>{notification.message}</span>
                         <span>
                                 {notification.link && (

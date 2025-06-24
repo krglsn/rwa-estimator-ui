@@ -73,14 +73,10 @@ export default function Appraise({provider, browserProvider}: Props) {
                 console.error("Error calling contract:", err.message);
                 show({
                     message: 'Transaction error! ' + err.message,
-                    type: 'error'
+                    type: 'error',
                 });
             } else {
                 console.error("Unknown tx error:", err);
-                show({
-                    message: 'Uknown transaction error!',
-                    type: 'error'
-                });
             }
 
         } finally {
@@ -126,6 +122,5 @@ export default function Appraise({provider, browserProvider}: Props) {
                 </div>
             </div>
         </div>
-
     )
 }

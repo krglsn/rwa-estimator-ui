@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
     const {account, connect} = useWallet()
-    return (<div className="max-w-screen overflow-clip">
+    return (<div className="flex flex-col min-h-screen">
         {/* Header */}
         <div className="navbar bg-base-100">
             <div className="navbar-start">
@@ -36,7 +36,7 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
             </div>
         </div>
         {/* Main */}
-        <main className="bg-base-200 min-h-screen">
+        <main className="bg-base-200 flex-grow">
             {children}
         </main>
     </div>);
