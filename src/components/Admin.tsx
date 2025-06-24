@@ -84,36 +84,38 @@ export default function Admin({provider}: Props) {
     };
 
     return (
-        <div className="card min-h-max bg-base-100 card-border">
-            <div className="card-title justify-center">
-                <div className="my-8"><br/>Admin</div>
-                <div
-                    className={`status ${isOwner ? 'status-success' : 'status-error'} animate-ping`}
-                />
-            </div>
-            <div className="card-body flex justify-center">
-                <legend className="fieldset-legend">Register appraiser</legend>
-                <div className="join">
-                    <label className="input w-[400px] join-item">
-                        <span className="label">Address</span>
-                        <input
-                            type="string"
-                            ref={addressRef}
-                        />
-                    </label>
-                    <button
-                        onClick={handleClick}
-                        disabled={isLoading || !isOwner}
-                        className="btn btn-primary join-item"
-                    >
-                        {isLoading ? (
-                            <span className="loading loading-spinner loading-sm"/>
-                        ) : (
-                            "Add Appraiser"
-                        )}
-                    </button>
+        <div className="flex justify-center">
+            <div className="card bg-base-100 card-border shadow-md p-4 w-150">
+                <div className="card-title justify-center">
+                    <span>Admin</span>
+                    <span
+                        className={`status ${isOwner ? 'status-success' : 'status-error animate-ping'}`}
+                    />
                 </div>
+                <div className="card-body flex justify-center">
+                    <legend className="fieldset-legend">Register appraiser</legend>
+                    <div className="join">
+                        <label className="input w-[400px] join-item">
+                            <span className="label">Address</span>
+                            <input
+                                type="string"
+                                ref={addressRef}
+                            />
+                        </label>
+                        <button
+                            onClick={handleClick}
+                            disabled={isLoading || !isOwner}
+                            className="btn btn-primary join-item"
+                        >
+                            {isLoading ? (
+                                <span className="loading loading-spinner loading-sm"/>
+                            ) : (
+                                "Add Appraiser"
+                            )}
+                        </button>
+                    </div>
 
+                </div>
             </div>
         </div>
     )

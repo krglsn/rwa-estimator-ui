@@ -86,16 +86,16 @@ export default function Appraise({provider, browserProvider}: Props) {
 
     return (
         <div className="flex justify-center">
-            <div className="card w-max min-h-max bg-base-100 card-border card-lg">
+            <div className="card bg-base-100 w-100 card-border card-md shadow-md justify-center p-6">
                 <div className="card-title justify-center">
-                    <br/>Appraisal
-                    <div
-                        className={`status ${isAppraiser ? 'status-success' : 'status-error'} animate-ping`}
+                    <span>Appraisal</span>
+                    <span
+                        className={`status ${isAppraiser ? 'status-success' : 'status-error animate-ping'}`}
                     />
                 </div>
-                <div className="card-body justify-center items-center">
+                <div className="card-body justify-center">
                     <form onSubmit={handleSubmit}>
-                        <fieldset className="fieldset rounded-box w-[350px]">
+                        <fieldset className="fieldset rounded-box">
                             <legend className="fieldset-legend">Set appraisal</legend>
 
                             <label className="label">Token ID</label>

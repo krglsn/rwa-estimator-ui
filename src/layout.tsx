@@ -35,8 +35,9 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
 
             </div>
         </div>
+        <div className="divider divider-neutral m-0 p-0"></div>
         {/* Main */}
-        <main className="bg-base-200 flex-grow">
+        <main className="bg-base-200/30 flex-grow">
             {children}
         </main>
     </div>);

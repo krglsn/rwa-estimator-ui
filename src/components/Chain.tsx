@@ -67,9 +67,9 @@ export default function Chain({provider}: Props) {
     // @ts-ignore
     return (
         <div className="flex justify-center">
-            <div className="card w-[800px] min-h-max bg-base-100 card-border card-lg justify-center">
+            <div className="card w-150 bg-base-100 card-border card-md shadow-md justify-center p-4">
                 <div className="card-title justify-center">
-                    <div><br/>Chain</div>
+                    Chain
                 </div>
                 <div className="card-body flex justify-center">
                     <div>

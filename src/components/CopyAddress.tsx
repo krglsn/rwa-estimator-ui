@@ -20,8 +20,8 @@ export function CopyableAddress({label, address}: CopyableAddressProps) {
 
     return (
         <div>
-            <div className="flex items-center gap-16">
-                {label}: {address}{"      "}<button
+            <div className="flex items-center gap-2">
+                {label}: {address}<button
                     onClick={handleCopy}
                     className="btn btn-xs btn-outline btn-soft"
                 >

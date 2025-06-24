@@ -57,14 +57,14 @@ export default function Chain({provider}: Props) {
 
     return (
         <div className="flex justify-center">
-            <div className="card w-full min-h-max bg-base-100 card-border card-lg">
+            <div className="card w-100 bg-base-100 card-border shadow-md p-4">
                 <div className="card-title justify-center">
-                    <br/>Token
+                    Token
                 </div>
-                <div className="card-body justify-center">
+                <div className="card-body justify-center items-center">
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend">Choose token</legend>
-                        <label className="input w-[140px]">
+                        <label className="input w-30">
                             <span className="label">ID</span>
                             <input
                                 type="number"
@@ -82,7 +82,7 @@ export default function Chain({provider}: Props) {
                     </fieldset>
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend">Choose epoch</legend>
-                        <label className="input  w-[140px]">
+                        <label className="input  w-30">
                             <span className="label">ID</span>
                             <input
                                 type="number"

@@ -16,7 +16,7 @@ const Appraiser: FunctionalComponent<Props> = ({wsProvider, browserProvider, pro
 
     return (
         <Layout>
-            <div class="grid grid-flow-row grid-cols-2 gap-[10px] mx-[50px] items-center justify-center">
+            <div class="grid grid-flow-row grid-cols-2 gap-6 items-center justify-center p-6">
                 <Chain provider={wsProvider}/>
                 <Appraise browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
             </div>
