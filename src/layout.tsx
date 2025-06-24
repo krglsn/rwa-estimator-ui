@@ -11,7 +11,13 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
         {/* Header */}
         <div className="navbar bg-base-100">
             <div className="navbar-start">
-                <a className="btn btn-ghost btn-xl text-xl no-underline" href="/">RWA Estimator</a>
+                <div className="w-40 rounded-full">
+                    <a href="/">
+                        <img
+                            alt="RWA Estimator Logo"
+                            src="src/assets/logo4.png"/>
+                    </a>
+                </div>
             </div>
             <div className="navbar-center">
                 <ul className="menu menu-horizontal textarea-lg">
