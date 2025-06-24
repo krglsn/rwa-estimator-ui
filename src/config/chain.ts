@@ -1,6 +1,6 @@
 export const CONTRACT_CONFIG = {
-    realEstateTokenAddress: '0xC3bBcE2aaCDB3b208b57238dF729002926e84989',
-    poolAddress: '0x5F786F5e708cC6b71a547CF6A9DD4687437D9C2E',
+    realEstateTokenAddress: '0x1E35657a76f96C95A188639c7A12AFFf374732d3',
+    poolAddress: '0xbCd27580F57e2a7f743e57FF4c082e9Cd139D25E',
     realEstateTokenABI: '/src/abi/RealEstateToken.json',
     poolABI: '/src/abi/Pool.json',
     wsRpc: "ws://127.0.0.1:8545",

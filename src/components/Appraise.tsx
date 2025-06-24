@@ -44,7 +44,6 @@ export default function Appraise({provider, browserProvider}: Props) {
     }, [account])
 
     const handleSubmit = async (e: Event) => {
-        console.log("Submitting...");
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         const tId = (form.elements.namedItem("tokenId") as HTMLInputElement).value;
@@ -78,7 +77,6 @@ export default function Appraise({provider, browserProvider}: Props) {
             } else {
                 console.error("Unknown tx error:", err);
             }
-
         } finally {
             setLoading(false);
         }

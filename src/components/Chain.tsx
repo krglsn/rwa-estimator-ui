@@ -76,7 +76,7 @@ export default function Chain({provider}: Props) {
                         Block: {blockNumber ? blockNumber + " | " : 'loading...'}{blockTime}
                     </div>
                     <div>
-                        Epoch: {epochId ? epochId + " | " : 'loading...'}
+                        Epoch: {epochId !== null ? epochId + " | " : 'loading... | '}
                         {epochEndTime ? new Date(epochEndTime * 1000).toISOString() : ""}
                     </div>
                     <div><CopyableAddress label={"Token"}

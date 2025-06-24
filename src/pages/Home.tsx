@@ -19,7 +19,7 @@ const Home: FunctionalComponent<Props> = ({provider, wsProvider, browserProvider
         <Layout>
             <div class="grid grid-flow-row grid-cols-2 gap-6 items-center justify-center p-6">
                 <Chain provider={wsProvider}/>
-                <Token provider={provider}/>
+                <Token provider={provider} browserProvider={browserProvider}/>
                 <Admin provider={browserProvider}/>
             </div>
         </Layout>
