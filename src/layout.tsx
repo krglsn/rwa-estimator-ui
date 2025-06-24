@@ -7,6 +7,7 @@ interface LayoutProps {
 
 const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
     const {account, connect} = useWallet()
+    const path = window.location.pathname;
     return (<div className="flex flex-col min-h-screen">
         {/* Header */}
         <div className="navbar bg-base-100">
@@ -20,10 +21,10 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
                 </div>
             </div>
             <div className="navbar-center">
-                <ul className="menu menu-horizontal textarea-lg">
-                    <li><a className="no-underline text-inherit" href="/">Admin</a></li>
-                    <li><a className="no-underline text-inherit" href="/appraiser">Appraiser</a></li>
-                    <li><a className="no-underline text-inherit">Depositor</a></li>
+                <ul className="menu menu-horizontal text-lg">
+                    <li><a className={path === "/" ? "btn btn-soft" : ""} href="/">Admin</a></li>
+                    <li><a className={path === "/appraiser" ? "btn btn-soft" : ""} href="/appraiser">Appraiser</a></li>
+                    <li><a className={path === "/depositor" ? "btn btn-soft" : ""}>Depositor</a></li>
                 </ul>
             </div>
             <div className="navbar-end p-6">
