@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'preact/hooks'
-import type {WebSocketProvider} from 'ethers'
+import {type BigNumberish, formatEther, type WebSocketProvider} from 'ethers'
 import {ethers} from "ethers";
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
 import Pool from "../abi/Pool.json";
+import {useWallet} from "../lib/useWallet.ts";
 
 type Props = {
     provider: WebSocketProvider | null
@@ -17,7 +18,9 @@ type TokenPlan = {
 
 export default function Chain({provider}: Props) {
 
+    const {account,} = useWallet();
     const [blockNumber, setBlockNumber] = useState<number | null>(null)
+    const [balance, setBalance] = useState<BigInt | null>(null)
     const [blockTime, setBlockTime] = useState<string>("")
     const [epochId, setEpochId] = useState<number>(0)
     const [epochEndTime, setEpochEndTime] = useState<number | null>(null)
@@ -49,6 +52,11 @@ export default function Chain({provider}: Props) {
 
         async function updateEpoch() {
             try {
+                if (account) {
+                    const balance = await provider?.getBalance(account) || null;
+                    setBalance(balance);
+                    console.log("Balance update: ", balance)
+                }
                 const [epoch, endTime]: [number, number] = await pool.getEpoch();
                 setEpochEndTime(Number(endTime));
                 setEpochId(epoch)
@@ -82,6 +90,9 @@ export default function Chain({provider}: Props) {
                     Chain
                 </div>
                 <div className="card-body flex justify-center">
+                    <div>
+                        Balance: {balance ? formatEther(balance as BigNumberish) : '0'}
+                    </div>
                     <div>
                         Block: {blockNumber ? blockNumber + " | " : 'loading...'}{blockTime}
                     </div>
