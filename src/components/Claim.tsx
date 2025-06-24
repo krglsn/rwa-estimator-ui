@@ -1,9 +1,10 @@
 import {type BrowserProvider, ethers, type JsonRpcProvider, type WebSocketProvider, ZeroAddress} from "ethers";
 import {useWallet} from "../lib/useWallet.ts";
-import {useEffect, useState} from "preact/hooks";
+import {useContext, useEffect, useState} from "preact/hooks";
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateToken from "../abi/RealEstateToken.json";
 import Pool from "../abi/Pool.json";
+import {NotificationContext} from "./NotificationContext.tsx";
 
 type Props = {
     browserProvider: BrowserProvider | null
@@ -14,9 +15,47 @@ type Props = {
 export default function Claim({provider, browserProvider}: Props) {
 
     const {account,} = useWallet();
+    const {show} = useContext(NotificationContext);
     const [tokenId, setTokenId] = useState<number>(0)
     const [claimable, setClaimable] = useState<number>(0);
+    const [loading, setLoading] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
+
+    const handleClaim = async (e: Event) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            // @ts-ignore
+            const signer = await browserProvider.getSigner();
+            const poolAddress = await token.getPool(tokenId);
+            const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
+            const tx = await pool.claim();
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                show({
+                    message: 'Transaction confirmed! ' + tx.hash,
+                    type: 'success',
+                });
+            } else {
+                show({
+                    message: 'Transaction failed! ' + tx.hash,
+                    type: 'error'
+                });
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Error calling contract:", err.message);
+                show({
+                    message: 'Transaction error! ' + err.message,
+                    type: 'error',
+                });
+            } else {
+                console.error("Unknown tx error:", err);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
             async function updateClaimable() {
@@ -57,21 +96,36 @@ export default function Claim({provider, browserProvider}: Props) {
                     <span>Claim</span>
                 </div>
                 <div className="card-body justify-center">
-                    <label className="input w-30">
-                        <span className="label">ID</span>
-                        <input
-                            type="number"
-                            min={0}
-                            step={1}
-                            placeholder="Token ID"
-                            value={tokenId}
-                            onChange={(
-                                e) => setTokenId(
-                                parseInt((e.target as HTMLInputElement).value) || 0
-                            )}
-                        />
-                    </label>
-                    Claimable: {claimable}
+                    <form onSubmit={handleClaim}>
+                        <fieldset className="fieldset rounded-box">
+                            <legend className="fieldset-legend">Claim rewards</legend>
+                            <label className="label">Token ID</label>
+                            <input
+                                type="number"
+                                name="tokenId"
+                                min="0"
+                                className="input"
+                                placeholder="id"
+                                value={tokenId}
+                                onChange={(
+                                    e) => setTokenId(
+                                    parseInt((e.target as HTMLInputElement).value) || 0
+                                )}
+                            />
+                            <p className="label"><span>Claimable: </span>
+                                <span> {claimable}</span></p>
+                            <button type="submit" disabled={!claimable || loading} className="btn btn-primary">
+                                {loading ? (
+                                    <>
+                                        <span className="loading loading-spinner loading-sm mr-2"/>
+                                        Sending tx...
+                                    </>
+                                ) : (
+                                    "Claim"
+                                )}
+                            </button>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
