@@ -1,8 +1,9 @@
 import {type BrowserProvider, ethers, type JsonRpcProvider, type WebSocketProvider} from "ethers";
-import {useEffect, useState} from "preact/hooks";
+import {useContext, useEffect, useState} from "preact/hooks";
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 import {useWallet} from "../lib/useWallet.ts";
+import {NotificationContext} from './NotificationContext.tsx';
 
 type Props = {
     browserProvider: BrowserProvider | null
@@ -16,6 +17,7 @@ export default function Appraise({provider, browserProvider}: Props) {
     const [loading, setLoading] = useState(false);
     const {account,} = useWallet()
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, provider);
+    const {show} = useContext(NotificationContext);
 
     useEffect(() => {
 
@@ -54,11 +56,33 @@ export default function Appraise({provider, browserProvider}: Props) {
             const signer = await browserProvider.getSigner();
             const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, signer);
             const tx = await token.setAppraiserPrice(tId, eId, amount);
-            console.log("Tx sent:", tx.hash);
-            await tx.wait();
-        } catch (err) {
-            console.error(err);
-            alert("Transaction failed");
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                show({
+                    message: 'Transaction confirmed! ' + tx.hash,
+                    type: 'success',
+                });
+            } else {
+                show({
+                    message: 'Transaction failed! ' + tx.hash,
+                    type: 'error'
+                });
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Error calling contract:", err.message);
+                show({
+                    message: 'Transaction error! ' + err.message,
+                    type: 'error'
+                });
+            } else {
+                console.error("Unknown tx error:", err);
+                show({
+                    message: 'Uknown transaction error!',
+                    type: 'error'
+                });
+            }
+
         } finally {
             setLoading(false);
         }
@@ -87,7 +111,7 @@ export default function Appraise({provider, browserProvider}: Props) {
                             <label className="label">Appraise</label>
                             <input type="number" name="appraisal" className="input" placeholder="value"/>
 
-                            <button type="submit" disabled={loading} className="btn btn-primary">
+                            <button type="submit" disabled={loading || !isAppraiser} className="btn btn-primary">
                                 {loading ? (
                                     <>
                                         <span className="loading loading-spinner loading-sm mr-2"/>

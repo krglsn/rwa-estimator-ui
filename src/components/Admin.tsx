@@ -1,8 +1,9 @@
-import {useRef, useState, useEffect} from 'preact/hooks'
+import {useContext, useEffect, useRef, useState} from 'preact/hooks'
 import {type BrowserProvider, ethers, getAddress} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 import {useWallet} from "../lib/useWallet.ts";
+import {NotificationContext} from "./NotificationContext.tsx";
 
 type Props = {
     provider: BrowserProvider | null
@@ -13,6 +14,7 @@ export default function Admin({provider}: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
     const {account,} = useWallet()
+    const {show} = useContext(NotificationContext);
     const addressRef = useRef<HTMLInputElement>(null);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, provider);
 
@@ -21,9 +23,11 @@ export default function Admin({provider}: Props) {
         async function updateStatus() {
             if (account) {
                 const owner = await token.owner();
-                if (owner.toLowerCase() === account.toLowerCase())
-                    {setIsOwner(true)}
-                else {setIsOwner(false)}
+                if (owner.toLowerCase() === account.toLowerCase()) {
+                    setIsOwner(true)
+                } else {
+                    setIsOwner(false)
+                }
             }
         }
 
@@ -39,11 +43,26 @@ export default function Admin({provider}: Props) {
                 const tx = await token.registerAppraiser(address)
                 const receipt = await tx.wait()
                 console.log("Receipt: ", receipt)
-            }
+                if (receipt.status === 1) {
+                    show({
+                        message: 'Transaction confirmed! ' + tx.hash,
+                        type: 'success',
+                    });
+                } else {
+                    show({
+                        message: 'Transaction failed! ' + tx.hash,
+                        type: 'error'
+                    });
+                }
 
+            }
         } catch (e: unknown) {
             if (e instanceof Error) {
                 console.error("Error calling contract:", e.message);
+                show({
+                    message: 'Transaction error! ' + e.message,
+                    type: 'error'
+                });
             } else {
                 console.error("Unknown error:", e);
             }
@@ -84,7 +103,7 @@ export default function Admin({provider}: Props) {
                     </label>
                     <button
                         onClick={handleClick}
-                        disabled={isLoading}
+                        disabled={isLoading || !isOwner}
                         className="btn btn-primary join-item"
                     >
                         {isLoading ? (
