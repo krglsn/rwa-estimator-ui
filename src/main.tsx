@@ -1,7 +1,13 @@
-import { render } from 'preact'
+import {render} from 'preact'
 import './index.css'
-import { App } from './app.tsx'
+import {App} from './app.tsx'
 import {NotificationProvider} from "./components/NotificationContext.tsx";
+import {TokenProvider} from "./context/TokenContext.tsx";
 
 render(
-    <NotificationProvider><App /></NotificationProvider>, document.getElementById('app')!);
+    <TokenProvider>
+        <NotificationProvider>
+            <App/>
+        </NotificationProvider>
+    </TokenProvider>
+    , document.getElementById('app')!);

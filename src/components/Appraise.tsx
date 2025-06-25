@@ -4,6 +4,7 @@ import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 import {useWallet} from "../lib/useWallet.ts";
 import {NotificationContext} from './NotificationContext.tsx';
+import {useToken} from "../context/TokenContext.tsx";
 
 type Props = {
     browserProvider: BrowserProvider | null
@@ -13,6 +14,7 @@ type Props = {
 
 export default function Appraise({provider, browserProvider}: Props) {
 
+    const { selectedTokenId } = useToken();
     const [isAppraiser, setIsAppraiser] = useState<boolean>(false)
     const [loading, setLoading] = useState(false);
     const {account,} = useWallet()
@@ -46,7 +48,6 @@ export default function Appraise({provider, browserProvider}: Props) {
     const handleSubmit = async (e: Event) => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
-        const tId = (form.elements.namedItem("tokenId") as HTMLInputElement).value;
         const eId = (form.elements.namedItem("epochId") as HTMLInputElement).value;
         const amount = (form.elements.namedItem("appraisal") as HTMLInputElement).value;
         setLoading(true);
@@ -54,7 +55,7 @@ export default function Appraise({provider, browserProvider}: Props) {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
             const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, signer);
-            const tx = await token.setAppraiserPrice(tId, eId, amount);
+            const tx = await token.setAppraiserPrice(selectedTokenId, eId, amount);
             const receipt = await tx.wait();
             if (receipt.status === 1) {
                 show({
@@ -96,11 +97,8 @@ export default function Appraise({provider, browserProvider}: Props) {
                         <fieldset className="fieldset rounded-box">
                             <legend className="fieldset-legend">Set appraisal</legend>
 
-                            <label className="label">Token ID</label>
-                            <input type="number" name="tokenId" className="input" placeholder="id"/>
-
                             <label className="label">Epoch ID</label>
-                            <input type="number" name="epochId" className="input" placeholder="id"/>
+                            <input type="number" min={0} name="epochId" className="input" placeholder="id"/>
 
                             <label className="label">Appraise</label>
                             <input type="number" name="appraisal" className="input" placeholder="value"/>

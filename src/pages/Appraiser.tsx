@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import Layout from '../layout';
 import Chain from '../components/Chain.tsx';
 import type {FunctionalComponent} from 'preact';

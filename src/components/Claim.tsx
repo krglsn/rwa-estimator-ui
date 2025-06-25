@@ -5,6 +5,7 @@ import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateToken from "../abi/RealEstateToken.json";
 import Pool from "../abi/Pool.json";
 import {NotificationContext} from "./NotificationContext.tsx";
+import {useToken} from "../context/TokenContext.tsx";
 
 type Props = {
     browserProvider: BrowserProvider | null
@@ -14,9 +15,9 @@ type Props = {
 
 export default function Claim({provider, browserProvider}: Props) {
 
+    const { selectedTokenId } = useToken();
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
-    const [tokenId, setTokenId] = useState<number>(0)
     const [claimable, setClaimable] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
@@ -27,7 +28,7 @@ export default function Claim({provider, browserProvider}: Props) {
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
-            const poolAddress = await token.getPool(tokenId);
+            const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
             const tx = await pool.claim();
             const receipt = await tx.wait();
@@ -59,8 +60,8 @@ export default function Claim({provider, browserProvider}: Props) {
 
     useEffect(() => {
             async function updateClaimable() {
-                if (tokenId !== null && account) {
-                    const poolAddress = await token.getPool(tokenId)
+                if (selectedTokenId !== null && account) {
+                    const poolAddress = await token.getPool(selectedTokenId)
                     console.log("Pool address: ", poolAddress)
                     if (poolAddress !== ZeroAddress) {
                         try {
@@ -85,7 +86,7 @@ export default function Claim({provider, browserProvider}: Props) {
             }
 
             updateClaimable();
-        }, [account, tokenId]
+        }, [account, selectedTokenId]
     )
 
 
@@ -99,19 +100,7 @@ export default function Claim({provider, browserProvider}: Props) {
                     <form onSubmit={handleClaim}>
                         <fieldset className="fieldset rounded-box">
                             <legend className="fieldset-legend">Claim rewards</legend>
-                            <label className="label">Token ID</label>
-                            <input
-                                type="number"
-                                name="tokenId"
-                                min="0"
-                                className="input"
-                                placeholder="id"
-                                value={tokenId}
-                                onChange={(
-                                    e) => setTokenId(
-                                    parseInt((e.target as HTMLInputElement).value) || 0
-                                )}
-                            />
+                            <label className="label">Token ID: {selectedTokenId}</label>
                             <p className="label"><span>Claimable: </span>
                                 <span> {claimable}</span></p>
                             <button type="submit" disabled={!claimable || loading} className="btn btn-primary">

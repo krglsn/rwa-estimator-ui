@@ -1,5 +1,6 @@
 import type {FunctionalComponent} from 'preact';
 import {useWallet} from './lib/useWallet';
+import {useToken} from "./context/TokenContext.tsx";
 
 interface LayoutProps {
     children: preact.ComponentChildren;
@@ -8,6 +9,8 @@ interface LayoutProps {
 const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
     const {account, connect} = useWallet()
     const path = window.location.pathname;
+  const { selectedTokenId, setSelectedTokenId} = useToken();
+
     return (<div className="flex flex-col min-h-screen">
         {/* Header */}
         <div className="navbar bg-base-100">
@@ -28,6 +31,25 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
                 </ul>
             </div>
             <div className="navbar-end p-6">
+                <div className="flex mx-8 gap-2">
+                    <div className="flex justify-center">
+                        <select
+                            defaultValue="0"
+                            value={selectedTokenId}
+                            className="select"
+                            onChange={(e) => setSelectedTokenId(
+                                parseInt((e.target as HTMLInputElement).value) || 0
+                            )}
+                        >
+                            <option disabled={true}>Choose Token ID</option>
+                            <option>0</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                        </select>
+                    </div>
+                </div>
                 <div className="flex gap-2">
                     {account ? (
                         <>

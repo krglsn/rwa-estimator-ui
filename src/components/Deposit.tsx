@@ -5,22 +5,23 @@ import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateToken from "../abi/RealEstateToken.json";
 import Pool from "../abi/Pool.json";
 import {NotificationContext} from "./NotificationContext.tsx";
+import {useToken} from "../context/TokenContext.tsx";
 
 type Props = {
     browserProvider: BrowserProvider | null
     provider: JsonRpcProvider | null
-    tokenId: number
 }
 
-export default function Deposit({provider, browserProvider, tokenId}: Props) {
+export default function Deposit({provider, browserProvider}: Props) {
 
+    const { selectedTokenId } = useToken();
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
     const [depositAmount, setDepositAmount] = useState<number>(0);
     const [price, setPrice] = useState<number>(0);
-    const [balanceNative, setBalanceNative] = useState<number>(0);
+    const [, setBalanceNative] = useState<number>(0);
     const [loading, setLoading] = useState(false);
-    const [withdrawable, setWithdrawable] = useState<number>(0);
+    const [, setWithdrawable] = useState<number>(0);
     const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
@@ -28,7 +29,7 @@ export default function Deposit({provider, browserProvider, tokenId}: Props) {
 
         async function updateDepositable() {
             try {
-                const poolAddress = await token.getPool(tokenId)
+                const poolAddress = await token.getPool(selectedTokenId)
                 const pool = new ethers.Contract(poolAddress, Pool.abi, provider);
                 const balance = account ? await provider?.getBalance(account) : 0
                 setBalanceNative(Number(balance));
@@ -46,7 +47,7 @@ export default function Deposit({provider, browserProvider, tokenId}: Props) {
 
         updateDepositable();
 
-    }, [tokenId, account, provider, depositAmount, withdrawAmount])
+    }, [selectedTokenId, account, provider, depositAmount, withdrawAmount])
 
     const handleDepositAmount = async (e: Event) => {
         e.preventDefault();
@@ -66,7 +67,7 @@ export default function Deposit({provider, browserProvider, tokenId}: Props) {
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
-            const poolAddress = await token.getPool(tokenId);
+            const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
             console.log("Depositing ", depositAmount)
             const tx = await pool.deposit(BigInt(depositAmount), {value: BigInt(depositAmount)});
@@ -103,7 +104,7 @@ export default function Deposit({provider, browserProvider, tokenId}: Props) {
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
-            const poolAddress = await token.getPool(tokenId);
+            const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
             const tokenSign = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, signer);
             console.log("Approving pool to withdraw");

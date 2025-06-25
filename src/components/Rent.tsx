@@ -5,15 +5,16 @@ import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateToken from "../abi/RealEstateToken.json";
 import Pool from "../abi/Pool.json";
 import {NotificationContext} from "./NotificationContext.tsx";
+import {useToken} from "../context/TokenContext.tsx";
 
 type Props = {
     browserProvider: BrowserProvider | null
     provider: JsonRpcProvider | null
-    tokenId: number
 }
 
-export default function Rent({provider, browserProvider, tokenId}: Props) {
+export default function Rent({provider, browserProvider}: Props) {
 
+    const { selectedTokenId } = useToken();
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
     const [rentDue, setRentDue] = useState<number>(0);
@@ -28,7 +29,7 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
-            const poolAddress = await token.getPool(tokenId);
+            const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
             const tx = await pool.paySafety(safetyDepositDue, {value: safetyDepositDue});
             const receipt = await tx.wait();
@@ -64,7 +65,7 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
-            const poolAddress = await token.getPool(tokenId);
+            const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
             const tx = await pool.payRent(rentDue, {value: rentDue});
             const receipt = await tx.wait();
@@ -96,7 +97,7 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
 
     useEffect(() => {
             async function updateRentInfo() {
-                const poolAddress = await token.getPool(tokenId)
+                const poolAddress = await token.getPool(selectedTokenId)
                 if (poolAddress !== ZeroAddress) {
                     try {
                         const pool = new ethers.Contract(poolAddress, Pool.abi, provider);
@@ -120,7 +121,7 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
             }
 
             updateRentInfo();
-        }, [account, tokenId]
+        }, [account, selectedTokenId]
     )
 
 

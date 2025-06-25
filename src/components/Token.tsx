@@ -6,11 +6,11 @@ import Pool from "../abi/Pool.json"
 import {NotificationContext} from "./NotificationContext.tsx";
 import {useWallet} from "../lib/useWallet.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
+import {useToken} from "../context/TokenContext.tsx";
 
 type Props = {
     provider: JsonRpcProvider | null
     browserProvider: BrowserProvider | null
-    tokenId: number
 }
 
 type TokenPlan = {
@@ -19,8 +19,9 @@ type TokenPlan = {
     programEnd: number
 }
 
-export default function Token({provider, browserProvider, tokenId}: Props) {
-
+export default function Token({provider, browserProvider}: Props) {
+    
+    const { selectedTokenId } = useToken();
     const [currentEpochId, setCurrentEpochId] = useState<number>(0)
     const [poolAddress, setPoolAddress] = useState<string | null>(null)
     const [poolBalanceNative, setPoolBalanceNative] = useState<number | null>(null)
@@ -52,15 +53,15 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
             const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, signer);
-            const tx = await token.setOraclePrice(tokenId, epochId, amount);
+            const tx = await token.setOraclePrice(selectedTokenId, epochId, amount);
             const receipt = await tx.wait();
             if (receipt.status === 1) {
                 show({
                     message: 'Transaction confirmed! ' + tx.hash,
                     type: 'success',
                 });
-                setPrice(await token.getEpochPrice(tokenId, epochId))
-                setOraclePrice(await token.getOraclePrice(tokenId, epochId))
+                setPrice(await token.getEpochPrice(selectedTokenId, epochId))
+                setOraclePrice(await token.getOraclePrice(selectedTokenId, epochId))
             } else {
                 show({
                     message: 'Transaction failed! ' + tx.hash,
@@ -84,7 +85,7 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
 
     useEffect(() => {
         async function updateEpoch() {
-            const poolAddress = await token.getPool(tokenId)
+            const poolAddress = await token.getPool(selectedTokenId)
             if (getAddress(poolAddress) !== ZeroAddress) {
                 try {
                     const pool = new ethers.Contract(poolAddress, Pool.abi, provider)
@@ -95,8 +96,8 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
                     setPlan(plan)
                     setPoolAddress(poolAddress)
                     setPoolBalanceNative(Number(await provider?.getBalance(poolAddress)))
-                    setPoolBalance(Number(await token.balanceOf(poolAddress, tokenId)))
-                    account && setUserBalance(Number(await token.balanceOf(account, tokenId)))
+                    setPoolBalance(Number(await token.balanceOf(poolAddress, selectedTokenId)))
+                    account && setUserBalance(Number(await token.balanceOf(account, selectedTokenId)))
                     account && setUserBalanceNative(Number(await provider?.getBalance(account)))
                     setSafetyAmount(Number(await pool.safetyAmount()))
                     setPaymentDeposited(Number(await pool.paymentDeposited()))
@@ -114,7 +115,7 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
                 setPoolAddress(null)
                 setPoolBalanceNative(0)
                 setPoolBalance(0)
-                account && setUserBalance(Number(await token.balanceOf(account, tokenId)))
+                account && setUserBalance(Number(await token.balanceOf(account, selectedTokenId)))
                 setUserBalanceNative(0)
             }
         }
@@ -126,7 +127,7 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
         }
 
 
-    }, [provider, tokenId, account])
+    }, [provider, selectedTokenId, account])
 
     useEffect(() => {
 
@@ -146,9 +147,9 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
 
     useEffect(() => {
 
-        async function updateTotalSupply(tokenId: number) {
+        async function updateTotalSupply(selectedTokenId: number) {
             try {
-                const supply = await token['totalSupply(uint256)'](tokenId);
+                const supply = await token['totalSupply(uint256)'](selectedTokenId);
                 setSupply(supply)
                 console.log("Supply retrieved: ", supply)
             } catch (e: unknown) {
@@ -160,17 +161,17 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
             }
         }
 
-        updateTotalSupply(tokenId);
+        updateTotalSupply(selectedTokenId);
 
-    }, [tokenId])
+    }, [selectedTokenId])
 
     useEffect(() => {
 
-        async function updateEpochPrice(tokenId: number, epochId: number) {
+        async function updateEpochPrice(selectedTokenId: number, epochId: number) {
             try {
-                const price = await token.getEpochPrice(tokenId, epochId);
-                const appraisals = await token.getAppraisalCount(tokenId, epochId);
-                const oraclePrice = await token.getOraclePrice(tokenId, epochId);
+                const price = await token.getEpochPrice(selectedTokenId, epochId);
+                const appraisals = await token.getAppraisalCount(selectedTokenId, epochId);
+                const oraclePrice = await token.getOraclePrice(selectedTokenId, epochId);
                 setPrice(price)
                 setAppraisals(appraisals)
                 setOraclePrice(oraclePrice)
@@ -183,9 +184,9 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
             }
         }
 
-        updateEpochPrice(tokenId, epochId);
+        updateEpochPrice(selectedTokenId, epochId);
 
-    }, [tokenId, epochId])
+    }, [selectedTokenId, epochId])
 
     return (
         <div className="flex justify-center">
