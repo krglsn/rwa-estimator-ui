@@ -10,6 +10,7 @@ import {CopyableAddress} from "./CopyAddress.tsx";
 type Props = {
     provider: JsonRpcProvider | null
     browserProvider: BrowserProvider | null
+    tokenId: number
 }
 
 type TokenPlan = {
@@ -18,11 +19,14 @@ type TokenPlan = {
     programEnd: number
 }
 
-export default function Token({provider, browserProvider}: Props) {
+export default function Token({provider, browserProvider, tokenId}: Props) {
 
-    const [tokenId, setTokenId] = useState<number>(0)
     const [currentEpochId, setCurrentEpochId] = useState<number>(0)
     const [poolAddress, setPoolAddress] = useState<string | null>(null)
+    const [poolBalanceNative, setPoolBalanceNative] = useState<number | null>(null)
+    const [poolBalance, setPoolBalance] = useState<number | null>(null)
+    const [userBalanceNative, setUserBalanceNative] = useState<number | null>(null)
+    const [userBalance, setUserBalance] = useState<number | null>(null)
     const [supply, setSupply] = useState<number | null>(null)
     const [price, setPrice] = useState<number | null>(null)
     const [oraclePrice, setOraclePrice] = useState<number>(0)
@@ -88,6 +92,10 @@ export default function Token({provider, browserProvider}: Props) {
                     const plan: TokenPlan = await pool.getPlan()
                     setPlan(plan)
                     setPoolAddress(poolAddress)
+                    setPoolBalanceNative(Number(await provider?.getBalance(poolAddress)))
+                    setPoolBalance(Number(await token.balanceOf(poolAddress, tokenId)))
+                    account && setUserBalance(Number(await token.balanceOf(account, tokenId)))
+                    account && setUserBalanceNative(Number(await provider?.getBalance(account)))
                 } catch (e: unknown) {
                     if (e instanceof Error) {
                         console.error("Error calling contract:", e.message);
@@ -100,6 +108,10 @@ export default function Token({provider, browserProvider}: Props) {
                 setCurrentEpochId(0)
                 setPlan(null)
                 setPoolAddress(null)
+                setPoolBalanceNative(0)
+                setPoolBalance(0)
+                account && setUserBalance(Number(await token.balanceOf(account, tokenId)))
+                setUserBalanceNative(0)
             }
         }
 
@@ -185,32 +197,31 @@ export default function Token({provider, browserProvider}: Props) {
 
                     </div>
                     <div>
+                        Total supply: {supply !== null ? supply : 'n/a'}
+                    </div>
+                    <div>
+                        Pool balance native: {poolBalanceNative}
+                    </div>
+                    <div>
+                        Pool RWA balance: {poolBalance}
+                    </div>
+                    <div>
+                        User balance native: {userBalanceNative}
+                    </div>
+                    <div>
+                        User RWA balance: {userBalance}
+                    </div>
+                    <div>
                         Epoch: {currentEpochId !== null ? currentEpochId : 'n/a'}
                         {epochEndTime ? " | " + new Date(epochEndTime * 1000).toISOString() : ""}
                     </div>
                     <div>
-                        Rent: {plan ? `${plan.rentAmount} | Epoch duration: ${plan.epochDuration} | Program end: ${new Date(Number(plan.programEnd) * 1000).toISOString()}` : 'n/a'}
+                        Rent: {plan ? `${plan.rentAmount} | 
+                        Epoch duration: ${plan.epochDuration} | 
+                        Program end: ${new Date(Number(plan.programEnd) * 1000).toISOString()}`
+                        : 'n/a'}
                     </div>
                     <div className="flex flex-row gap-6 justify-between">
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Choose token</legend>
-                            <label className="input w-30">
-                                <span className="label">ID</span>
-                                <input
-                                    type="number"
-                                    min={0}
-                                    step={1}
-                                    placeholder="Token ID"
-                                    value={tokenId}
-                                    onChange={(
-                                        e) => setTokenId(
-                                        parseInt((e.target as HTMLInputElement).value) || 0
-                                    )}
-                                />
-                            </label>
-                            <p className="label"><span>Total supply: </span>
-                                <span> {supply ?? "loading..."}</span></p>
-                        </fieldset>
                         <fieldset className="fieldset">
                             <legend className="fieldset-legend">Choose epoch</legend>
                             <label className="input  w-30">

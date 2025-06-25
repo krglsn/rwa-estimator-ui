@@ -9,13 +9,13 @@ import {NotificationContext} from "./NotificationContext.tsx";
 type Props = {
     browserProvider: BrowserProvider | null
     provider: JsonRpcProvider | null
+    tokenId: number
 }
 
-export default function Rent({provider, browserProvider}: Props) {
+export default function Rent({provider, browserProvider, tokenId}: Props) {
 
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
-    const [tokenId, setTokenId] = useState<number>(0)
     const [rentDue, setRentDue] = useState<number>(0);
     const [safetyDepositDue, setSafetyDepositDue] = useState<number>(0);
     const [liquidable, setLiquidable] = useState<boolean>(false);
@@ -90,38 +90,28 @@ export default function Rent({provider, browserProvider}: Props) {
 
     return (
         <div className="flex justify-center">
-            <div className="card bg-base-100 w-100 card-border card-md shadow-md justify-center p-6">
+            <div className="card bg-base-100 w-120 card-border card-md shadow-md justify-center p-6">
                 <div className="card-title justify-center">
                     <span>Rent & Obligations</span>
                 </div>
-                <div className="card-body justify-center">
-                    <fieldset className="fieldset rounded-box">
-                        <legend className="fieldset-legend">Token Id</legend>
-                        <label className="label">Token ID</label>
-                        <input
-                            type="number"
-                            name="tokenId"
-                            min="0"
-                            className="input"
-                            placeholder="id"
-                            value={tokenId}
-                            onChange={(
-                                e) => setTokenId(
-                                parseInt((e.target as HTMLInputElement).value) || 0
-                            )}
-                        />
-                        <p className="label">
-                            <span>Rent due: </span>
-                            <span> {rentDue}</span>
-                            <span>Safety due:</span>
-                            <span>{safetyDepositDue}</span>
-                        </p>
-                        <p className="label">
-                            <span>Can liquidate: </span>
-                            <span> {liquidable ? "Yes" : "No"}</span>
-                        </p>
-                    </fieldset>
-                    <button onClick={handlePayRent} disabled={!rentDue || loading} className="btn btn-primary">
+                <div className="card-body items-center">
+                    <div className="flex w-80 flex-row justify-between gap-4">
+                        <div className="stats shadow w-max">
+                            <div className="stat overflow-hidden">
+                                <div className="stat-title">Rent due</div>
+                                <div className="stat-value">{rentDue ?? "n/a"}</div>
+                                <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
+                            </div>
+                        </div>
+                        <div className="stats shadow w-max">
+                            <div className="stat overflow-hidden">
+                                <div className="stat-title">Safety deposit due</div>
+                                <div className="stat-value">{safetyDepositDue ?? "n/a"}</div>
+                                <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onClick={handlePayRent} disabled={!rentDue || loading} className="w-80 btn btn-primary">
                         {loading ? (
                             <>
                                 <span className="loading loading-spinner loading-sm mr-2"/>
