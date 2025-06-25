@@ -3,7 +3,7 @@ import {type BrowserProvider, ethers, getAddress} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 import {useWallet} from "../lib/useWallet.ts";
-import {NotificationContext} from "./NotificationContext.tsx";
+import {NotificationContext} from "../context/NotificationContext.tsx";
 
 type Props = {
     provider: BrowserProvider | null

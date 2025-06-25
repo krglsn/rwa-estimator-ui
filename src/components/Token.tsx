@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "preact/hooks";
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import RealEstateTokenABI from "../abi/RealEstateToken.json";
 import Pool from "../abi/Pool.json"
-import {NotificationContext} from "./NotificationContext.tsx";
+import {NotificationContext} from "../context/NotificationContext.tsx";
 import {useWallet} from "../lib/useWallet.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
 import {useToken} from "../context/TokenContext.tsx";
