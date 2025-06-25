@@ -22,6 +22,42 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
     const [loading, setLoading] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
+        const handleSafetyDeposit = async (e: Event) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            // @ts-ignore
+            const signer = await browserProvider.getSigner();
+            const poolAddress = await token.getPool(tokenId);
+            const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
+            const tx = await pool.paySafety(safetyDepositDue, {value: safetyDepositDue});
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                show({
+                    message: 'Transaction confirmed! ' + tx.hash,
+                    type: 'success',
+                });
+            } else {
+                show({
+                    message: 'Transaction failed! ' + tx.hash,
+                    type: 'error'
+                });
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Error calling contract:", err.message);
+                show({
+                    message: 'Transaction error! ' + err.message,
+                    type: 'error',
+                });
+            } else {
+                console.error("Unknown tx error:", err);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const handlePayRent = async (e: Event) => {
         e.preventDefault();
         setLoading(true);
@@ -119,6 +155,16 @@ export default function Rent({provider, browserProvider, tokenId}: Props) {
                             </>
                         ) : (
                             "Pay rent"
+                        )}
+                    </button>
+                    <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading} className="w-80 btn btn-primary">
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm mr-2"/>
+                                Sending tx...
+                            </>
+                        ) : (
+                            "Pay safety deposit"
                         )}
                     </button>
                 </div>

@@ -5,6 +5,7 @@ import Home from "./pages/Home.tsx";
 import {CONTRACT_CONFIG} from "./config/chain.ts";
 import {Router} from "preact-router";
 import Appraiser from "./pages/Appraiser.tsx";
+import Depositor from "./pages/Depositor.tsx";
 
 export function App() {
 
@@ -66,6 +67,7 @@ export function App() {
         <Router>
             <Home path="/" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
             <Appraiser path="/appraiser" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
+            <Depositor path="/depositor" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider} />
         </Router> :
         <div>Providers are not available</div>
 

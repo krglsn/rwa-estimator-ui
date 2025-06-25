@@ -25,9 +25,11 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
     const [poolAddress, setPoolAddress] = useState<string | null>(null)
     const [poolBalanceNative, setPoolBalanceNative] = useState<number | null>(null)
     const [poolBalance, setPoolBalance] = useState<number | null>(null)
+    const [paymentDeposited, setPaymentDeposited] = useState<number>(0)
     const [userBalanceNative, setUserBalanceNative] = useState<number | null>(null)
     const [userBalance, setUserBalance] = useState<number | null>(null)
     const [supply, setSupply] = useState<number | null>(null)
+    const [safetyAmount, setSafetyAmount] = useState<number>(0)
     const [price, setPrice] = useState<number | null>(null)
     const [oraclePrice, setOraclePrice] = useState<number>(0)
     const [appraisals, setAppraisals] = useState<number>(0)
@@ -96,6 +98,8 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
                     setPoolBalance(Number(await token.balanceOf(poolAddress, tokenId)))
                     account && setUserBalance(Number(await token.balanceOf(account, tokenId)))
                     account && setUserBalanceNative(Number(await provider?.getBalance(account)))
+                    setSafetyAmount(Number(await pool.safetyAmount()))
+                    setPaymentDeposited(Number(await pool.paymentDeposited()))
                 } catch (e: unknown) {
                     if (e instanceof Error) {
                         console.error("Error calling contract:", e.message);
@@ -122,7 +126,7 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
         }
 
 
-    }, [provider, tokenId])
+    }, [provider, tokenId, account])
 
     useEffect(() => {
 
@@ -197,19 +201,25 @@ export default function Token({provider, browserProvider, tokenId}: Props) {
 
                     </div>
                     <div>
-                        Total supply: {supply !== null ? supply : 'n/a'}
+                        Total supply: {supply !== null ? `${supply} RWA` : 'n/a'}
                     </div>
                     <div>
-                        Pool balance native: {poolBalanceNative}
+                        Pool balance native: {poolBalanceNative} WEI
                     </div>
                     <div>
-                        Pool RWA balance: {poolBalance}
+                        Pool RWA balance: {poolBalance} RWA
                     </div>
                     <div>
-                        User balance native: {userBalanceNative}
+                        Safety deposit: {safetyAmount} WEI
                     </div>
                     <div>
-                        User RWA balance: {userBalance}
+                        Payment deposited: {paymentDeposited} WEI
+                    </div>
+                    <div>
+                        User balance native: {userBalanceNative} WEI
+                    </div>
+                    <div>
+                        User RWA balance: {userBalance} RWA
                     </div>
                     <div>
                         Epoch: {currentEpochId !== null ? currentEpochId : 'n/a'}

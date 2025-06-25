@@ -24,7 +24,7 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
                 <ul className="menu menu-horizontal text-lg">
                     <li><a className={path === "/" ? "btn btn-soft" : ""} href="/">Admin</a></li>
                     <li><a className={path === "/appraiser" ? "btn btn-soft" : ""} href="/appraiser">Appraiser</a></li>
-                    <li><a className={path === "/depositor" ? "btn btn-soft" : ""}>Depositor</a></li>
+                    <li><a className={path === "/depositor" ? "btn btn-soft" : ""} href="/depositor">Depositor</a></li>
                 </ul>
             </div>
             <div className="navbar-end p-6">
