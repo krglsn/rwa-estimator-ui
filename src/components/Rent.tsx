@@ -139,42 +139,49 @@ export default function Rent({provider, browserProvider}: Props) {
                 </div>
                 <div className="card-body items-center">
                     <div className="flex flex-col w-60 gap-4">
-                    <div className="stats shadow w-full">
-                        <div className="stat overflow-hidden">
-                            <div className="stat-title">Rent due</div>
-                            <div className="stat-value">{rentDue ?? "n/a"}</div>
-                            <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
+                        <div className="stats shadow w-full">
+                            <div className="stat overflow-hidden">
+                                <div className="stat-title">Rent due</div>
+                                <div className="stat-value">{rentDue ?? "n/a"}</div>
+                                <div className="stat-desc">Liquidable: {liquidable ?
+                                    <div className="badge badge-sm badge-soft badge-accent">yes</div> :
+                                    <div className="badge badge-sm badge-soft badge-success">no</div>}
+                                </div>
+                            </div>
                         </div>
+                        <div className="stats shadow w-full">
+                            <div className="stat overflow-hidden">
+                                <div className="stat-title">Safety deposit due</div>
+                                <div className="stat-value">{safetyDepositDue ?? "n/a"}</div>
+                                <div className="stat-desc">Liquidable: {liquidable ?
+                                    <div className="badge badge-sm badge-soft badge-accent">yes</div> :
+                                    <div className="badge badge-sm badge-soft badge-success">no</div>}
+                                </div>
+                            </div>
+                        </div>
+                        <button onClick={handlePayRent} disabled={!rentDue || loading}
+                                className="w-full btn btn-primary">
+                            {loading ? (
+                                <>
+                                    <span className="loading loading-spinner loading-sm mr-2"/>
+                                    Sending tx...
+                                </>
+                            ) : (
+                                "Pay rent"
+                            )}
+                        </button>
+                        <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading}
+                                className="w-full btn btn-primary">
+                            {loading ? (
+                                <>
+                                    <span className="loading loading-spinner loading-sm mr-2"/>
+                                    Sending tx...
+                                </>
+                            ) : (
+                                "Pay safety deposit"
+                            )}
+                        </button>
                     </div>
-                    <div className="stats shadow w-full">
-                        <div className="stat overflow-hidden">
-                            <div className="stat-title">Safety deposit due</div>
-                            <div className="stat-value">{safetyDepositDue ?? "n/a"}</div>
-                            <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
-                        </div>
-                    </div>
-                    <button onClick={handlePayRent} disabled={!rentDue || loading} className="w-full btn btn-primary">
-                        {loading ? (
-                            <>
-                                <span className="loading loading-spinner loading-sm mr-2"/>
-                                Sending tx...
-                            </>
-                        ) : (
-                            "Pay rent"
-                        )}
-                    </button>
-                    <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading}
-                            className="w-full btn btn-primary">
-                        {loading ? (
-                            <>
-                                <span className="loading loading-spinner loading-sm mr-2"/>
-                                Sending tx...
-                            </>
-                        ) : (
-                            "Pay safety deposit"
-                        )}
-                    </button>
-                        </div>
                 </div>
             </div>
         </div>

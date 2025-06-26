@@ -5,6 +5,7 @@ import type {FunctionalComponent} from "preact";
 import Deposit from "../components/Deposit.tsx";
 import Chain from "../components/Chain.tsx";
 import Claim from "../components/Claim.tsx";
+import PriceEpochChart from "../components/Chart.tsx";
 
 type Props = {
     path?: string,
@@ -24,6 +25,7 @@ const Depositor: FunctionalComponent<Props> = ({provider, browserProvider, wsPro
                 </div>
                 <div className="col-span-5 flex flex-col gap-2">
                     <Deposit provider={provider} browserProvider={browserProvider}/>
+                    <PriceEpochChart provider={provider} />
                 </div>
                 <div className="col-span-2 flex flex-col gap-2">
                     <Claim browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
