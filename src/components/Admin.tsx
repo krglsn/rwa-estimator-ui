@@ -176,12 +176,12 @@ export default function Admin({browserProvider}: Props) {
                         className={`status ${isOwner ? 'status-success' : 'status-error animate-ping'}`}
                     />
                 </div>
-                <div className="card-body flex justify-center">
+                <div className="card-body justify-center">
 
                     <fieldset>
                         <form onSubmit={sendOraclePrice}>
                             <legend className="fieldset-legend">Override oracle price</legend>
-                            <div className="flex flex-row justify-between">
+                            <div className="flex flex-row justify-left gap-2">
                                 <div className="flex flex-col">
                                     <label className="input w-40">
                                         <span className="label">Epoch ID</span>
@@ -254,9 +254,10 @@ export default function Admin({browserProvider}: Props) {
 
                     <div className="divider"></div>
 
+                    <fieldset>
                     <legend className="fieldset-legend">Register appraiser</legend>
                     <div className="join">
-                        <label className="input w-full join-item">
+                        <label className="input w-105 join-item">
                             <span className="label">Address</span>
                             <input
                                 type="string"
@@ -274,7 +275,7 @@ export default function Admin({browserProvider}: Props) {
                                 "Add Appraiser"
                             )}
                         </button>
-                    </div>
+                    </div></fieldset>
                 </div>
             </div>
         </div>

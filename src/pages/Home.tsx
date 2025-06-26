@@ -15,20 +15,23 @@ type Props = {
 
 const Home: FunctionalComponent<Props> = ({provider, wsProvider, browserProvider}: Props) => {
 
-    return (
-        <Layout provider={provider}>
-            <div class="grid grid-flow-row grid-cols-2 gap-6 justify-center p-6">
-                <div className="flex flex-col justify-center w-150 gap-2">
-                    <Chain provider={wsProvider}/>
-                    <Token provider={provider} />
-                </div>
-                <div className="flex flex-col w-150 gap-2">
-                    <Admin browserProvider={browserProvider}/>
-                    <Rent provider={provider} browserProvider={browserProvider}/>
-                </div>
+return (
+    <Layout provider={provider}>
+        <div className="grid grid-cols-11 gap-2 p-2">
+            <div className="col-span-4 flex flex-col gap-2">
+                <Chain provider={wsProvider}/>
+                <Token provider={provider}/>
             </div>
-        </Layout>
-    );
+            <div className="col-span-5 flex flex-col gap-2">
+                <Admin browserProvider={browserProvider}/>
+            </div>
+            <div className="col-span-2 flex flex-col gap-2">
+                <Rent provider={provider} browserProvider={browserProvider}/>
+            </div>
+        </div>
+    </Layout>
+);
+
 }
 
 export default Home

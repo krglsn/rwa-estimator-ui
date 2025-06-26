@@ -14,7 +14,7 @@ type Props = {
 
 export default function Rent({provider, browserProvider}: Props) {
 
-    const { selectedTokenId } = useToken();
+    const {selectedTokenId} = useToken();
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
     const [rentDue, setRentDue] = useState<number>(0);
@@ -23,7 +23,7 @@ export default function Rent({provider, browserProvider}: Props) {
     const [loading, setLoading] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
-        const handleSafetyDeposit = async (e: Event) => {
+    const handleSafetyDeposit = async (e: Event) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -127,28 +127,28 @@ export default function Rent({provider, browserProvider}: Props) {
 
     return (
         <div className="flex justify-center">
-            <div className="card bg-base-100 w-120 card-border card-md shadow-md justify-center p-6">
+            <div className="card bg-base-100 w-full card-border card-sm shadow-md p-6">
                 <div className="card-title justify-center">
                     <span>Rent & Obligations</span>
                 </div>
                 <div className="card-body items-center">
-                    <div className="flex w-80 flex-row justify-between gap-4">
-                        <div className="stats shadow w-max">
-                            <div className="stat overflow-hidden">
-                                <div className="stat-title">Rent due</div>
-                                <div className="stat-value">{rentDue ?? "n/a"}</div>
-                                <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
-                            </div>
+                    <div className="flex flex-col w-60 gap-4">
+                    <div className="stats shadow w-full">
+                        <div className="stat overflow-hidden">
+                            <div className="stat-title">Rent due</div>
+                            <div className="stat-value">{rentDue ?? "n/a"}</div>
+                            <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
                         </div>
-                        <div className="stats shadow w-max">
-                            <div className="stat overflow-hidden">
-                                <div className="stat-title">Safety deposit due</div>
-                                <div className="stat-value">{safetyDepositDue ?? "n/a"}</div>
-                                <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
-                            </div>
+
+                    </div>
+                    <div className="stats shadow w-full">
+                        <div className="stat overflow-hidden">
+                            <div className="stat-title">Safety deposit due</div>
+                            <div className="stat-value">{safetyDepositDue ?? "n/a"}</div>
+                            <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
                         </div>
                     </div>
-                    <button onClick={handlePayRent} disabled={!rentDue || loading} className="w-80 btn btn-primary">
+                    <button onClick={handlePayRent} disabled={!rentDue || loading} className="w-full btn btn-primary">
                         {loading ? (
                             <>
                                 <span className="loading loading-spinner loading-sm mr-2"/>
@@ -158,7 +158,8 @@ export default function Rent({provider, browserProvider}: Props) {
                             "Pay rent"
                         )}
                     </button>
-                    <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading} className="w-80 btn btn-primary">
+                    <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading}
+                            className="w-full btn btn-primary">
                         {loading ? (
                             <>
                                 <span className="loading loading-spinner loading-sm mr-2"/>
@@ -168,6 +169,7 @@ export default function Rent({provider, browserProvider}: Props) {
                             "Pay safety deposit"
                         )}
                     </button>
+                        </div>
                 </div>
             </div>
         </div>
