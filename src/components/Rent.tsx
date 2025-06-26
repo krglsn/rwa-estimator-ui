@@ -44,6 +44,9 @@ export default function Rent({provider, browserProvider}: Props) {
                     type: 'error'
                 });
             }
+            setRentDue(await pool.rentDue());
+            setSafetyDepositDue(await pool.safetyAmountDue())
+            setLiquidable(await pool.canLiquidate());
         } catch (err: unknown) {
             if (err instanceof Error) {
                 console.error("Error calling contract:", err.message);
@@ -80,6 +83,9 @@ export default function Rent({provider, browserProvider}: Props) {
                     type: 'error'
                 });
             }
+            setRentDue(await pool.rentDue());
+            setSafetyDepositDue(await pool.safetyAmountDue())
+            setLiquidable(await pool.canLiquidate());
         } catch (err: unknown) {
             if (err instanceof Error) {
                 console.error("Error calling contract:", err.message);

@@ -15,7 +15,8 @@ export default function Admin({browserProvider}: Props) {
     const {selectedTokenId, currentEpochId} = useToken();
     const [loading, setLoading] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
-    const [epochId, setEpochId] = useState(currentEpochId);
+    console.log("Current epoch: ", currentEpochId);
+    const [epochId, setEpochId] = useState<number>(0);
     const [oraclePrice, setOraclePrice] = useState<number>(0)
     const [price, setPrice] = useState<number | null>(null)
     const [appraisals, setAppraisals] = useState<number>(0)
@@ -62,6 +63,13 @@ export default function Admin({browserProvider}: Props) {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        if (currentEpochId !== undefined && currentEpochId !== null) {
+            setEpochId(currentEpochId);
+        }
+    }, [currentEpochId]);
+
 
     useEffect(() => {
 
@@ -255,27 +263,28 @@ export default function Admin({browserProvider}: Props) {
                     <div className="divider"></div>
 
                     <fieldset>
-                    <legend className="fieldset-legend">Register appraiser</legend>
-                    <div className="join">
-                        <label className="input w-105 join-item">
-                            <span className="label">Address</span>
-                            <input
-                                type="string"
-                                ref={addressRef}
-                            />
-                        </label>
-                        <button
-                            onClick={handleClick}
-                            disabled={loading || !isOwner}
-                            className="btn btn-primary join-item w-40"
-                        >
-                            {loading ? (
-                                <span className="loading loading-spinner loading-sm"/>
-                            ) : (
-                                "Add Appraiser"
-                            )}
-                        </button>
-                    </div></fieldset>
+                        <legend className="fieldset-legend">Register appraiser</legend>
+                        <div className="join">
+                            <label className="input w-105 join-item">
+                                <span className="label">Address</span>
+                                <input
+                                    type="string"
+                                    ref={addressRef}
+                                />
+                            </label>
+                            <button
+                                onClick={handleClick}
+                                disabled={loading || !isOwner}
+                                className="btn btn-primary join-item w-40"
+                            >
+                                {loading ? (
+                                    <span className="loading loading-spinner loading-sm"/>
+                                ) : (
+                                    "Add Appraiser"
+                                )}
+                            </button>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
