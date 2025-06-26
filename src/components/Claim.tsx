@@ -15,14 +15,16 @@ type Props = {
 
 export default function Claim({provider, browserProvider}: Props) {
 
-    const { selectedTokenId } = useToken();
+    const {selectedTokenId} = useToken();
     const {account,} = useWallet();
     const {show} = useContext(NotificationContext);
-    const [claimable, setClaimable] = useState<number>(0);
+    const [claimableA, setClaimableA] = useState<number>(0);
+    const [claimableD, setClaimableD] = useState<number>(0);
     const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
-    const handleClaim = async (e: Event) => {
+    const handleClaimAppraiser = async (e: Event) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -43,6 +45,7 @@ export default function Claim({provider, browserProvider}: Props) {
                     type: 'error'
                 });
             }
+            setClaimableA(await pool.canClaimAppraiser(account))
         } catch (err: unknown) {
             if (err instanceof Error) {
                 console.error("Error calling contract:", err.message);
@@ -58,6 +61,43 @@ export default function Claim({provider, browserProvider}: Props) {
         }
     }
 
+    const handleClaimDepositor = async (e: Event) => {
+        e.preventDefault();
+        setLoading2(true);
+        try {
+            // @ts-ignore
+            const signer = await browserProvider.getSigner();
+            const poolAddress = await token.getPool(selectedTokenId);
+            const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
+            const tx = await pool.claimDepositor();
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                show({
+                    message: 'Transaction confirmed! ' + tx.hash,
+                    type: 'success',
+                });
+            } else {
+                show({
+                    message: 'Transaction failed! ' + tx.hash,
+                    type: 'error'
+                });
+            }
+            setClaimableD(await pool.canClaimDepositor(account))
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Error calling contract:", err.message);
+                show({
+                    message: 'Transaction error! ' + err.message,
+                    type: 'error',
+                });
+            } else {
+                console.error("Unknown tx error:", err);
+            }
+        } finally {
+            setLoading2(false);
+        }
+    }
+
     useEffect(() => {
             async function updateClaimable() {
                 if (selectedTokenId !== null && account) {
@@ -67,7 +107,9 @@ export default function Claim({provider, browserProvider}: Props) {
                         try {
                             const pool = new ethers.Contract(poolAddress, Pool.abi, provider)
                             const res: number = await pool.canClaimAppraiser(account)
-                            setClaimable(res);
+                            setClaimableA(res)
+                            const res2: number = await pool.canClaimDepositor(account)
+                            setClaimableD(res2)
                         } catch (e: unknown) {
                             if (e instanceof Error) {
                                 console.error("Error calling contract:", e.message);
@@ -76,10 +118,12 @@ export default function Claim({provider, browserProvider}: Props) {
                             }
                         }
                     } else {
-                        setClaimable(0)
+                        setClaimableA(0)
+                        setClaimableD(0)
                     }
                 } else {
-                    setClaimable(0)
+                    setClaimableA(0)
+                    setClaimableD(0)
                 }
 
 
@@ -97,24 +141,43 @@ export default function Claim({provider, browserProvider}: Props) {
                     <span>Claim</span>
                 </div>
                 <div className="card-body justify-center">
-                    <form onSubmit={handleClaim}>
-                        <fieldset className="fieldset rounded-box">
-                            <legend className="fieldset-legend">Claim rewards</legend>
-                            <label className="label">Token ID: {selectedTokenId}</label>
-                            <p className="label"><span>Claimable: </span>
-                                <span> {claimable}</span></p>
-                            <button type="submit" disabled={!claimable || loading} className="btn btn-primary">
-                                {loading ? (
-                                    <>
-                                        <span className="loading loading-spinner loading-sm mr-2"/>
-                                        Sending tx...
-                                    </>
-                                ) : (
-                                    "Claim"
-                                )}
-                            </button>
-                        </fieldset>
-                    </form>
+                    <div className="stats shadow w-full">
+                        <div className="stat overflow-hidden">
+                            <div className="stat-title">You can claim</div>
+                            <div className="stat-value">{claimableA}</div>
+                            <div className="stat-desc">as appraiser</div>
+                        </div>
+                    </div>
+                    <button onClick={handleClaimAppraiser} disabled={!claimableA || loading}
+                            className="btn btn-primary">
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm mr-2"/>
+                                Sending tx...
+                            </>
+                        ) : (
+                            "Claim"
+                        )}
+                    </button>
+                    <div className="divider"></div>
+                    <div className="stats shadow w-full">
+                        <div className="stat overflow-hidden">
+                            <div className="stat-title">You can claim</div>
+                            <div className="stat-value">{claimableD}</div>
+                            <div className="stat-desc">as depositor</div>
+                        </div>
+                    </div>
+                    <button onClick={handleClaimDepositor} disabled={!claimableD || loading2}
+                            className="btn btn-primary">
+                        {loading2 ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm mr-2"/>
+                                Sending tx...
+                            </>
+                        ) : (
+                            "Claim"
+                        )}
+                    </button>
                 </div>
             </div>
         </div>

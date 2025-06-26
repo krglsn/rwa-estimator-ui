@@ -145,7 +145,6 @@ export default function Rent({provider, browserProvider}: Props) {
                             <div className="stat-value">{rentDue ?? "n/a"}</div>
                             <div className="stat-desc">Liquidable: {liquidable ? "yes" : "no"}</div>
                         </div>
-
                     </div>
                     <div className="stats shadow w-full">
                         <div className="stat overflow-hidden">

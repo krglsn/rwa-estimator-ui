@@ -4,6 +4,7 @@ import type {FunctionalComponent} from 'preact';
 import type {BrowserProvider, JsonRpcProvider, WebSocketProvider} from "ethers";
 import Appraise from "../components/Appraise.tsx";
 import Claim from "../components/Claim.tsx";
+import Token from "../components/Token.tsx";
 
 type Props = {
     path?: string,
@@ -15,13 +16,20 @@ type Props = {
 const Appraiser: FunctionalComponent<Props> = ({wsProvider, browserProvider, provider}: Props) => {
 
     return (
-        <Layout>
-            <div class="grid grid-flow-row grid-cols-2 gap-6 items-center justify-center p-6">
+            <Layout provider={provider}>
+        <div className="grid grid-cols-11 gap-2 p-2">
+            <div className="col-span-4 flex flex-col gap-2">
                 <Chain provider={wsProvider}/>
+                <Token provider={provider}/>
+            </div>
+            <div className="col-span-5 flex flex-col gap-2">
                 <Appraise browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
+            </div>
+            <div className="col-span-2 flex flex-col gap-2">
                 <Claim browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
             </div>
-        </Layout>
+        </div>
+    </Layout>
     );
 }
 

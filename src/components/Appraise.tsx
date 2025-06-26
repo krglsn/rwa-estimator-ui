@@ -14,12 +14,24 @@ type Props = {
 
 export default function Appraise({provider, browserProvider}: Props) {
 
-    const { selectedTokenId } = useToken();
+    const {selectedTokenId, currentEpochId} = useToken();
     const [isAppraiser, setIsAppraiser] = useState<boolean>(false)
     const [loading, setLoading] = useState(false);
+    const [epochId, setEpochId] = useState<number>(0);
     const {account,} = useWallet()
+    const [oraclePrice, setOraclePrice] = useState<number>(0)
+    const [price, setPrice] = useState<number | null>(null)
+    const [appraisals, setAppraisals] = useState<number>(0)
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, provider);
     const {show} = useContext(NotificationContext);
+
+
+    useEffect(() => {
+        if (currentEpochId !== undefined && currentEpochId !== null) {
+            setEpochId(currentEpochId);
+        }
+    }, [currentEpochId, selectedTokenId]);
+
 
     useEffect(() => {
 
@@ -43,7 +55,30 @@ export default function Appraise({provider, browserProvider}: Props) {
         }
 
         updateStatus();
-    }, [account])
+    }, [account, currentEpochId, selectedTokenId])
+
+    useEffect(() => {
+
+        async function updateEpochPrice(selectedTokenId: number, epochId: number) {
+            try {
+                const price = await token.getEpochPrice(selectedTokenId, epochId);
+                const appraisals = await token.getAppraisalCount(selectedTokenId, epochId);
+                const oraclePrice = await token.getOraclePrice(selectedTokenId, epochId);
+                setPrice(price)
+                setAppraisals(appraisals)
+                setOraclePrice(oraclePrice)
+            } catch (e: unknown) {
+                if (e instanceof Error) {
+                    console.error("Error calling contract:", e.message);
+                } else {
+                    console.error("Unknown error:", e);
+                }
+            }
+        }
+
+        updateEpochPrice(selectedTokenId, epochId);
+
+    }, [selectedTokenId, epochId])
 
     const handleSubmit = async (e: Event) => {
         e.preventDefault();
@@ -68,6 +103,12 @@ export default function Appraise({provider, browserProvider}: Props) {
                     type: 'error'
                 });
             }
+            const price = await token.getEpochPrice(selectedTokenId, epochId)
+            const appraisals = await token.getAppraisalCount(selectedTokenId, epochId)
+            const oraclePrice = await token.getOraclePrice(selectedTokenId, epochId)
+            setPrice(price)
+            setAppraisals(appraisals)
+            setOraclePrice(oraclePrice)
         } catch (err: unknown) {
             if (err instanceof Error) {
                 console.error("Error calling contract:", err.message);
@@ -85,7 +126,7 @@ export default function Appraise({provider, browserProvider}: Props) {
 
     return (
         <div className="flex justify-center">
-            <div className="card bg-base-100 w-100 card-border card-md shadow-md justify-center p-6">
+            <div className="card bg-base-100 card-border card-md shadow-md justify-center p-6">
                 <div className="card-title justify-center">
                     <span>Appraisal</span>
                     <span
@@ -93,28 +134,80 @@ export default function Appraise({provider, browserProvider}: Props) {
                     />
                 </div>
                 <div className="card-body justify-center">
-                    <form onSubmit={handleSubmit}>
-                        <fieldset className="fieldset rounded-box">
-                            <legend className="fieldset-legend">Set appraisal</legend>
 
-                            <label className="label">Epoch ID</label>
-                            <input type="number" min={0} name="epochId" className="input" placeholder="id"/>
-
-                            <label className="label">Appraise</label>
-                            <input type="number" name="appraisal" className="input" placeholder="value"/>
-
-                            <button type="submit" disabled={loading || !isAppraiser} className="btn btn-primary">
-                                {loading ? (
-                                    <>
-                                        <span className="loading loading-spinner loading-sm mr-2"/>
-                                        Sending tx...
-                                    </>
-                                ) : (
-                                    "Send"
-                                )}
-                            </button>
-                        </fieldset>
-                    </form>
+                    <fieldset>
+                        <form onSubmit={handleSubmit}>
+                            <legend className="fieldset-legend">Send appraisal for epoch</legend>
+                            <div className="flex flex-row justify-left gap-2">
+                                <div className="flex flex-col">
+                                    <label className="input w-full">
+                                        <span className="label">Epoch ID</span>
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            step={1}
+                                            name="epochId"
+                                            placeholder="Epoch ID"
+                                            value={epochId}
+                                            onChange={(
+                                                e) => setEpochId(
+                                                parseInt((e.target as HTMLInputElement).value) || 0
+                                            )}
+                                        />
+                                    </label>
+                                    <p className="label mt-2">
+                                        <span>
+                                            Oracle price:
+                                        </span>
+                                        <span>
+                                            {oraclePrice ?? "n/a"}
+                                        </span>
+                                    </p>
+                                    <p className="label">
+                                        <span>
+                                            Weighted price:
+                                        </span>
+                                        <span>
+                                            {price ?? "n/a"}
+                                        </span>
+                                    </p>
+                                    <p className="label">
+                                        <span>
+                                            Appraisals:
+                                        </span>
+                                        <span>
+                                            {appraisals ?? "n/a"}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div className="join">
+                                    <label className="input join-item">
+                                        <span className="label">Price</span>
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            step={1}
+                                            name="appraisal"
+                                            placeholder="value"
+                                        />
+                                    </label>
+                                    <button
+                                        disabled={loading || !isAppraiser}
+                                        className="join-item btn btn-primary w-40"
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <span className="loading loading-spinner loading-sm mr-2"/>
+                                                Sending tx...
+                                            </>
+                                        ) : (
+                                            "Send tx"
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
                 </div>
             </div>
         </div>

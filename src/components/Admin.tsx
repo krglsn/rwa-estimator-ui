@@ -110,22 +110,6 @@ export default function Admin({browserProvider}: Props) {
         updateStatus();
     }, [account])
 
-    useEffect(() => {
-
-        async function updateStatus() {
-            if (account) {
-                const owner = await token.owner();
-                if (owner.toLowerCase() === account.toLowerCase()) {
-                    setIsOwner(true)
-                } else {
-                    setIsOwner(false)
-                }
-            }
-        }
-
-        updateStatus();
-    }, [account])
-
     const handleAddAppraiser = async (appraiser: string) => {
         try {
             if (browserProvider) {
