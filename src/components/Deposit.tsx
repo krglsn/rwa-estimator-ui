@@ -21,6 +21,7 @@ export default function Deposit({provider, browserProvider}: Props) {
     const [price, setPrice] = useState<number>(0);
     const [, setBalanceNative] = useState<number>(0);
     const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     const [, setWithdrawable] = useState<number>(0);
     const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
@@ -100,7 +101,7 @@ export default function Deposit({provider, browserProvider}: Props) {
 
     const handleWithdraw = async (e: Event) => {
         e.preventDefault();
-        setLoading(true);
+        setLoading2(true);
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
@@ -135,14 +136,14 @@ export default function Deposit({provider, browserProvider}: Props) {
                 console.error("Unknown tx error:", err);
             }
         } finally {
-            setLoading(false);
+            setLoading2(false);
         }
     }
 
 
     return (
         <div className="flex justify-center">
-            <div className="card bg-base-100 w-120 card-border card-md shadow-md justify-center p-6">
+            <div className="card bg-base-100 w-full card-border card-md shadow-md justify-center p-6">
                 <div className="card-title justify-center">
                     <span>Deposit & Withdraw</span>
                 </div>
@@ -161,7 +162,7 @@ export default function Deposit({provider, browserProvider}: Props) {
                             <button
                                 onClick={handleDeposit}
                                 value={depositAmount}
-                                className="btn btn-primary join-item"
+                                className="btn btn-primary w-40 join-item"
                             >
                                 {loading ? (
                                     <span className="loading loading-spinner loading-sm"/>
@@ -185,11 +186,12 @@ export default function Deposit({provider, browserProvider}: Props) {
                                 />
                             </label>
                             <button
+                                disabled={loading2}
                                 onClick={handleWithdraw}
                                 value={withdrawAmount}
-                                className="btn btn-primary join-item"
+                                className="btn btn-primary w-40 join-item"
                             >
-                                {loading ? (
+                                {loading2 ? (
                                     <span className="loading loading-spinner loading-sm"/>
                                 ) : (
                                     "Withdraw"
