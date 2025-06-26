@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'preact/hooks'
-import {type BigNumberish, formatEther, type WebSocketProvider} from 'ethers'
+import {type WebSocketProvider} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
 import {useWallet} from "../lib/useWallet.ts";
@@ -51,24 +51,37 @@ export default function Chain({provider}: Props) {
 
     // @ts-ignore
     return (
-        <div className="flex justify-center">
-            <div className="card w-150 bg-base-100 card-border card-md shadow-md justify-center p-4">
-                <div className="card-title justify-center">
-                    Chain
-                </div>
-                <div className="card-body flex justify-center">
-                    <div>
-                        Balance: {balance ? formatEther(balance as BigNumberish) : '0'}
-                    </div>
-                    <div>
-                        Block: {blockNumber ? blockNumber + " | " : 'loading...'}{blockTime}
-                    </div>
-                    <div><CopyableAddress label={"Token"}
-                                          address={CONTRACT_CONFIG.realEstateTokenAddress}></CopyableAddress></div>
+        <div className="card w-full bg-base-100 card-border card-md shadow-md justify-center p-4">
+            <div className="card-title justify-center">
+                Chain Information
+            </div>
+            <div className="card-body flex justify-center">
+                <div className="flex flex-col gap-4">
+                    <ul className="menu w-full">
+                        <li>
+                            <span>Token:
+                                <span className="badge justify-self-end">
+                                    <CopyableAddress address={CONTRACT_CONFIG.realEstateTokenAddress}></CopyableAddress>
+                                </span>
+                            </span>
+                        </li>
+                        <li>
+                            <span>Current block number:
+                                <span className="badge justify-self-end">
+                                    {blockNumber ? blockNumber : 'n/a'}
+                                </span>
+                            </span>
+                        </li>
+                        <li>
+                            <span>Current block time:
+                                <span className="badge justify-self-end">
+                                    {blockTime ? blockTime : 'n/a'}
+                                </span>
+                            </span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-
-
     )
 }

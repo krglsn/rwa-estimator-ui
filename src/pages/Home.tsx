@@ -17,11 +17,15 @@ const Home: FunctionalComponent<Props> = ({provider, wsProvider, browserProvider
 
     return (
         <Layout>
-            <div class="grid grid-flow-row grid-cols-2 gap-6 items-center justify-center p-6">
-                <Chain provider={wsProvider}/>
-                <Token provider={provider} browserProvider={browserProvider}/>
-                <Admin provider={browserProvider}/>
-                <Rent provider={provider} browserProvider={browserProvider}/>
+            <div class="grid grid-flow-row grid-cols-2 gap-6 justify-center p-6">
+                <div className="flex flex-col justify-center w-150 gap-2">
+                    <Chain provider={wsProvider}/>
+                    <Token provider={provider} browserProvider={browserProvider}/>
+                </div>
+                <div className="flex flex-col w-150 gap-2">
+                    <Admin provider={browserProvider}/>
+                    <Rent provider={provider} browserProvider={browserProvider}/>
+                </div>
             </div>
         </Layout>
     );

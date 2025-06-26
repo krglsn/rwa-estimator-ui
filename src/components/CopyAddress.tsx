@@ -1,11 +1,10 @@
 import {useState} from 'preact/hooks';
 
 type CopyableAddressProps = {
-    label: string;
     address: string;
 };
 
-export function CopyableAddress({label, address}: CopyableAddressProps) {
+export function CopyableAddress({address}: CopyableAddressProps) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -21,7 +20,8 @@ export function CopyableAddress({label, address}: CopyableAddressProps) {
     return (
         <div>
             <div className="flex items-center gap-2">
-                {label}: {address}<button
+                <span>{address}</span>
+                <button
                     onClick={handleCopy}
                     className="btn btn-xs btn-outline btn-soft"
                 >

@@ -20,9 +20,10 @@ type TokenPlan = {
 }
 
 export default function Token({provider, browserProvider}: Props) {
-    
-    const { selectedTokenId } = useToken();
+
+    const {selectedTokenId} = useToken();
     const [currentEpochId, setCurrentEpochId] = useState<number>(0)
+    const [currentPrice, setCurrentPrice] = useState<number>(0)
     const [poolAddress, setPoolAddress] = useState<string | null>(null)
     const [poolBalanceNative, setPoolBalanceNative] = useState<number | null>(null)
     const [poolBalance, setPoolBalance] = useState<number | null>(null)
@@ -31,6 +32,7 @@ export default function Token({provider, browserProvider}: Props) {
     const [userBalance, setUserBalance] = useState<number | null>(null)
     const [supply, setSupply] = useState<number | null>(null)
     const [safetyAmount, setSafetyAmount] = useState<number>(0)
+    const [safetyDueAmount, setSafetyDueAmount] = useState<number>(0)
     const [price, setPrice] = useState<number | null>(null)
     const [oraclePrice, setOraclePrice] = useState<number>(0)
     const [appraisals, setAppraisals] = useState<number>(0)
@@ -100,7 +102,9 @@ export default function Token({provider, browserProvider}: Props) {
                     account && setUserBalance(Number(await token.balanceOf(account, selectedTokenId)))
                     account && setUserBalanceNative(Number(await provider?.getBalance(account)))
                     setSafetyAmount(Number(await pool.safetyAmount()))
+                    setSafetyDueAmount(Number(await pool.safetyAmountDue()))
                     setPaymentDeposited(Number(await pool.paymentDeposited()))
+                    setCurrentPrice(Number(await pool.getPrice()))
                 } catch (e: unknown) {
                     if (e instanceof Error) {
                         console.error("Error calling contract:", e.message);
@@ -189,49 +193,94 @@ export default function Token({provider, browserProvider}: Props) {
     }, [selectedTokenId, epochId])
 
     return (
-        <div className="flex justify-center">
-            <div className="card w-150 bg-base-100 card-border shadow-md p-4">
+            <div className="card w-full bg-base-100 card-border shadow-md p-4">
                 <div className="card-title justify-center">
-                    Token
+                    Pool Information
                 </div>
                 <div className="card-body">
-                    <div>
-                        {poolAddress ?
-                            <CopyableAddress label={"Pool"} address={poolAddress}></CopyableAddress>
-                            : "Pool: n/a"}
+                    <div className="flex flex-col gap-4">
+                        <ul className="menu w-full">
+                            <li>
+                                <span>Pool:<span className="badge justify-self-end">{poolAddress ?
+                                    <CopyableAddress address={poolAddress}></CopyableAddress>
+                                    : "n/a"}</span></span>
+                            </li>
+                            <li>
+                                <span>Rent payment, WEI:
+                                    <span className="badge justify-self-end">
+                                        {plan ? `${plan.rentAmount}` : 'n/a'}
+                                    </span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Epoch duration, s:
+                                    <span className="badge justify-self-end">
+                                        {plan ? `${plan.epochDuration}` : 'n/a'}
+                                    </span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Program end:
+                                    <span className="badge justify-self-end">
+                                        {plan ? `${new Date(Number(plan.programEnd) * 1000).toISOString()}` : 'n/a'}
+                                    </span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Total supply, RWA:<span
+                                    className="badge justify-self-end">{supply !== null ? `${supply}` : 'n/a'}</span></span>
+                            </li>
+                            <li>
+                                <span>Pool balance, RWA:
+                                    <span className="badge justify-self-end">{poolBalance}</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Pool balance, WEI:
+                                    <span className="badge justify-self-end">{poolBalanceNative}</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Safety requirement, WEI:
+                                    <span className="badge justify-self-end">{safetyAmount}</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Safety due, WEI:
+                                    <span className="badge justify-self-end">{safetyDueAmount}</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Deposited, WEI:
+                                    <span className="badge justify-self-end">{paymentDeposited}</span>
+                                </span>
+                            </li>
+                            <li >
+                                <span>Current price, WEI:
+                                    <span className="badge justify-self-end">{currentPrice}</span>
+                                </span>
+                            </li>
+                            <li >
+                                <span>Current epoch:
+                                    <span className="badge justify-self-end">{currentEpochId}</span>
+                                </span>
+                            </li>
+                            <li >
+                                <span>Epoch end:
+                                    <span className="badge justify-self-end">{epochEndTime ? new Date(epochEndTime * 1000).toISOString() : ""}</span>
+                                </span>
+                            </li>
 
+                        </ul>
                     </div>
-                    <div>
-                        Total supply: {supply !== null ? `${supply} RWA` : 'n/a'}
-                    </div>
-                    <div>
-                        Pool balance native: {poolBalanceNative} WEI
-                    </div>
-                    <div>
-                        Pool RWA balance: {poolBalance} RWA
-                    </div>
-                    <div>
-                        Safety deposit: {safetyAmount} WEI
-                    </div>
-                    <div>
-                        Payment deposited: {paymentDeposited} WEI
-                    </div>
+
                     <div>
                         User balance native: {userBalanceNative} WEI
                     </div>
                     <div>
                         User RWA balance: {userBalance} RWA
                     </div>
-                    <div>
-                        Epoch: {currentEpochId !== null ? currentEpochId : 'n/a'}
-                        {epochEndTime ? " | " + new Date(epochEndTime * 1000).toISOString() : ""}
-                    </div>
-                    <div>
-                        Rent: {plan ? `${plan.rentAmount} | 
-                        Epoch duration: ${plan.epochDuration} | 
-                        Program end: ${new Date(Number(plan.programEnd) * 1000).toISOString()}`
-                        : 'n/a'}
-                    </div>
+
                     <div className="flex flex-row gap-6 justify-between">
                         <fieldset className="fieldset">
                             <legend className="fieldset-legend">Choose epoch</legend>
@@ -295,8 +344,6 @@ export default function Token({provider, browserProvider}: Props) {
                     </div>
                 </div>
             </div>
-        </div>
-
     )
 
 }

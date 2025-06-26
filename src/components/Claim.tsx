@@ -30,7 +30,7 @@ export default function Claim({provider, browserProvider}: Props) {
             const signer = await browserProvider.getSigner();
             const poolAddress = await token.getPool(selectedTokenId);
             const pool = new ethers.Contract(poolAddress, Pool.abi, signer);
-            const tx = await pool.claim();
+            const tx = await pool.claimAppraiser();
             const receipt = await tx.wait();
             if (receipt.status === 1) {
                 show({
