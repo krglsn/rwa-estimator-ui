@@ -2,7 +2,6 @@ import {useEffect, useState} from 'preact/hooks'
 import {type WebSocketProvider} from 'ethers'
 import {CONTRACT_CONFIG} from "../config/chain.ts";
 import {CopyableAddress} from "./CopyAddress.tsx";
-import {useWallet} from "../lib/useWallet.ts";
 
 type Props = {
     provider: WebSocketProvider | null
@@ -10,24 +9,8 @@ type Props = {
 
 export default function Chain({provider}: Props) {
 
-    const {account,} = useWallet();
     const [blockNumber, setBlockNumber] = useState<number | null>(null)
-    const [balance, setBalance] = useState<BigInt | null>(null)
     const [blockTime, setBlockTime] = useState<string>("")
-
-    useEffect(() => {
-
-        async function updateBalance() {
-            if (account) {
-                const balance = await provider?.getBalance(account) || null;
-                setBalance(balance);
-                console.log("Balance update: ", balance)
-            }
-        }
-
-        updateBalance();
-
-    }, [account])
 
     useEffect(() => {
         if (provider) {
@@ -51,7 +34,7 @@ export default function Chain({provider}: Props) {
 
     // @ts-ignore
     return (
-        <div className="card w-full bg-base-100 card-border card-md shadow-md justify-center p-4">
+        <div className="card card-xs w-full bg-base-100 card-border card-md shadow-md justify-center p-4">
             <div className="card-title justify-center">
                 Chain Information
             </div>

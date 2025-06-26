@@ -9,7 +9,7 @@ interface LayoutProps {
 const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
     const {account, connect} = useWallet()
     const path = window.location.pathname;
-  const { selectedTokenId, setSelectedTokenId} = useToken();
+    const {selectedTokenId, setSelectedTokenId} = useToken();
 
     return (<div className="flex flex-col min-h-screen">
         {/* Header */}
