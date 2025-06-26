@@ -1,15 +1,50 @@
 import type {FunctionalComponent} from 'preact';
 import {useWallet} from './lib/useWallet';
 import {useToken} from "./context/TokenContext.tsx";
+import {useEffect, useState} from "preact/hooks";
+import type {JsonRpcProvider} from "ethers";
+import {ethers} from "ethers";
+import {CONTRACT_CONFIG} from "./config/chain.ts";
+import RealEstateTokenABI from "./abi/RealEstateToken.json";
 
 interface LayoutProps {
     children: preact.ComponentChildren;
+    provider: JsonRpcProvider | null;
 }
 
-const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
+const Layout: FunctionalComponent<LayoutProps> = ({children, provider}) => {
     const {account, connect} = useWallet()
     const path = window.location.pathname;
     const {selectedTokenId, setSelectedTokenId} = useToken();
+    const [nativeBalance, setNativeBalance] = useState<number>(0);
+    const [rwaBalance, setRwaBalance] = useState<number>(0);
+    const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateTokenABI.abi, provider);
+
+    useEffect(() => {
+
+            async function updateBalances() {
+                if (account && provider) {
+                    try {
+                        setRwaBalance(Number(await token.balanceOf(account, selectedTokenId)))
+                        setNativeBalance(Number(await provider.getBalance(account)))
+                    } catch (e: unknown) {
+                        if (e instanceof Error) {
+                            console.error("Error calling contract:", e.message);
+                        } else {
+                            console.error("Unknown error:", e);
+                        }
+                    }
+
+                } else {
+                    setNativeBalance(0);
+                    setRwaBalance(0);
+                }
+            }
+
+            updateBalances();
+        },
+        [selectedTokenId, account]
+    )
 
     return (<div className="flex flex-col min-h-screen">
         {/* Header */}
@@ -26,8 +61,10 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
             <div className="navbar-center">
                 <ul className="menu menu-horizontal text-lg">
                     <li><a className={path === "/" ? "btn btn-soft" : ""} href="/">Admin</a></li>
-                    <li><a className={path === "/appraiser" ? "btn btn-soft" : ""} href="/appraiser">Appraiser</a></li>
-                    <li><a className={path === "/depositor" ? "btn btn-soft" : ""} href="/depositor">Depositor</a></li>
+                    <li><a className={path === "/appraiser" ? "btn btn-soft" : ""} href="/appraiser">Appraiser</a>
+                    </li>
+                    <li><a className={path === "/depositor" ? "btn btn-soft" : ""} href="/depositor">Depositor</a>
+                    </li>
                 </ul>
             </div>
             <div className="navbar-end p-6">
@@ -50,10 +87,17 @@ const Layout: FunctionalComponent<LayoutProps> = ({children}) => {
                         </select>
                     </div>
                 </div>
+
                 <div className="flex gap-2">
                     {account ? (
                         <>
-                            {account.slice(0, 6)}...{account.slice(-4)}
+                            <div
+                                className="tooltip tooltip-left tooltip-secondary"
+                                data-tip={
+                                    `WEI:${nativeBalance} RWA:${rwaBalance}`
+                                }>
+                                    {account.slice(0, 6)}...{account.slice(-4)}
+                            </div>
                         </>
                     ) : (
                         <button onClick={connect} className="btn btn-sm btn-primary">

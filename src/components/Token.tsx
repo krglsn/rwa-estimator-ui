@@ -25,8 +25,6 @@ export default function Token({provider}: Props) {
     const [poolBalanceNative, setPoolBalanceNative] = useState<number | null>(null)
     const [poolBalance, setPoolBalance] = useState<number | null>(null)
     const [paymentDeposited, setPaymentDeposited] = useState<number>(0)
-    const [userBalanceNative, setUserBalanceNative] = useState<number | null>(null)
-    const [userBalance, setUserBalance] = useState<number | null>(null)
     const [supply, setSupply] = useState<number | null>(null)
     const [safetyAmount, setSafetyAmount] = useState<number>(0)
     const [safetyDueAmount, setSafetyDueAmount] = useState<number>(0)
@@ -51,8 +49,6 @@ export default function Token({provider}: Props) {
                     setPoolAddress(poolAddress)
                     setPoolBalanceNative(Number(await provider?.getBalance(poolAddress)))
                     setPoolBalance(Number(await token.balanceOf(poolAddress, selectedTokenId)))
-                    account && setUserBalance(Number(await token.balanceOf(account, selectedTokenId)))
-                    account && setUserBalanceNative(Number(await provider?.getBalance(account)))
                     setSafetyAmount(Number(await pool.safetyAmount()))
                     setSafetyDueAmount(Number(await pool.safetyAmountDue()))
                     setPaymentDeposited(Number(await pool.paymentDeposited()))
@@ -71,8 +67,6 @@ export default function Token({provider}: Props) {
                 setPoolAddress(null)
                 setPoolBalanceNative(0)
                 setPoolBalance(0)
-                account && setUserBalance(Number(await token.balanceOf(account, selectedTokenId)))
-                setUserBalanceNative(0)
             }
         }
 
@@ -185,13 +179,6 @@ export default function Token({provider}: Props) {
                             </li>
 
                         </ul>
-                    </div>
-
-                    <div>
-                        User balance native: {userBalanceNative} WEI
-                    </div>
-                    <div>
-                        User RWA balance: {userBalance} RWA
                     </div>
                 </div>
             </div>

@@ -16,7 +16,7 @@ type Props = {
 const Home: FunctionalComponent<Props> = ({provider, wsProvider, browserProvider}: Props) => {
 
     return (
-        <Layout>
+        <Layout provider={provider}>
             <div class="grid grid-flow-row grid-cols-2 gap-6 justify-center p-6">
                 <div className="flex flex-col justify-center w-150 gap-2">
                     <Chain provider={wsProvider}/>
