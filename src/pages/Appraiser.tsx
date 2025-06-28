@@ -5,6 +5,7 @@ import type {BrowserProvider, JsonRpcProvider, WebSocketProvider} from "ethers";
 import Appraise from "../components/Appraise.tsx";
 import Claim from "../components/Claim.tsx";
 import Token from "../components/Token.tsx";
+import PriceEpochChart from "../components/Chart.tsx";
 
 type Props = {
     path?: string,
@@ -24,6 +25,7 @@ const Appraiser: FunctionalComponent<Props> = ({wsProvider, browserProvider, pro
                 </div>
                 <div className="col-span-5 flex flex-col gap-2">
                     <Appraise browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
+                    <PriceEpochChart provider={provider}/>
                 </div>
                 <div className="col-span-2 flex flex-col gap-2">
                     <Claim browserProvider={browserProvider} provider={provider} wsProvider={wsProvider}/>
