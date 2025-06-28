@@ -21,11 +21,12 @@ export default function Rent({provider, browserProvider}: Props) {
     const [safetyDepositDue, setSafetyDepositDue] = useState<number>(0);
     const [liquidable, setLiquidable] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
     const handleSafetyDeposit = async (e: Event) => {
         e.preventDefault();
-        setLoading(true);
+        setLoading2(true);
         try {
             // @ts-ignore
             const signer = await browserProvider.getSigner();
@@ -58,7 +59,7 @@ export default function Rent({provider, browserProvider}: Props) {
                 console.error("Unknown tx error:", err);
             }
         } finally {
-            setLoading(false);
+            setLoading2(false);
         }
     }
 
@@ -170,9 +171,9 @@ export default function Rent({provider, browserProvider}: Props) {
                                 "Pay rent"
                             )}
                         </button>
-                        <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading}
+                        <button onClick={handleSafetyDeposit} disabled={!safetyDepositDue || loading2}
                                 className="w-full btn btn-primary">
-                            {loading ? (
+                            {loading2 ? (
                                 <>
                                     <span className="loading loading-spinner loading-sm mr-2"/>
                                     Sending tx...
