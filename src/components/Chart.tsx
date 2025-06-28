@@ -15,7 +15,7 @@ export default function PriceEpochChart({provider}: Props) {
     const {selectedTokenId, currentEpochId} = useToken()
     const [priceData, setPriceData] = useState<Array<{ epochId: number, price: number }>>([]);
     const [oraclePriceData, setOraclePriceData] = useState<Array<{ epochId: number, price: number }>>([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
     const token = new ethers.Contract(CONTRACT_CONFIG.realEstateTokenAddress, RealEstateToken.abi, provider);
 
     useEffect(() => {
@@ -24,10 +24,10 @@ export default function PriceEpochChart({provider}: Props) {
                 setLoading(true);
                 const prices = [];
                 const oraclePrices = [];
-                const numEpochs = 5;
+                const numEpochs = 10;
                 const startEpoch = Math.max(0, Number(currentEpochId) - numEpochs + 1)
 
-                for (let i = 0; i <= Number(5); i++) {
+                for (let i = startEpoch; i <= startEpoch + numEpochs - 1; i++) {
                     try {
                         const price = await token.getEpochPrice(selectedTokenId, i);
                         const oraclePrice = await token.getOraclePrice(selectedTokenId, i);
