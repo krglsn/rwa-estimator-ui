@@ -25,7 +25,7 @@ export default function PriceEpochChart({provider}: Props) {
                 const prices = [];
                 const oraclePrices = [];
                 const numEpochs = 10;
-                const startEpoch = Math.max(0, Number(currentEpochId) - numEpochs + 1)
+                const startEpoch = Math.max(0, Number(currentEpochId) - numEpochs + 3)
 
                 for (let i = startEpoch; i <= startEpoch + numEpochs - 1; i++) {
                     try {
@@ -49,7 +49,7 @@ export default function PriceEpochChart({provider}: Props) {
         if (provider) {
             fetchPriceData();
         }
-    }, [provider]);
+    }, [provider, currentEpochId]);
 
     return <PriceChart priceData={priceData} oraclePriceData={oraclePriceData} />;
 
