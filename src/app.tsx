@@ -69,6 +69,6 @@ export function App() {
             <Appraiser path="/appraiser" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider}/>
             <Depositor path="/depositor" provider={provider} wsProvider={wsProvider} browserProvider={walletProvider} />
         </Router> :
-        <div>Providers are not available</div>
+        <div>Providers are not available. Make sure you have a Metamask extension and it is unlocked.</div>
 
 }
